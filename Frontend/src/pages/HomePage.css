@@ -47,12 +47,12 @@ body {
 
 .top-tab {
     background-color: #f7f7f7;
-    color: #008080; /* Teal text */
+    color: #008080; 
     border: 1px solid #ddd;
 }
 
 .register-btn {
-    background-color: #ffc107; /* Gold/Yellow */
+    background-color: #ffc107; 
     color: #333;
     border: 1px solid #ffb300;
 }
@@ -61,7 +61,7 @@ body {
     color: white;
 }
 
-/* --- MODAL OVERLAY & PANEL --- */
+
 .auth-modal-overlay {
     position: fixed;
     top: 0; left: 0;
@@ -79,13 +79,13 @@ body {
     background: white;
     padding: 40px 30px 30px 30px;
     border-radius: 12px;
-    position: relative; /* important for absolute positioning */
+    position: relative; 
     box-shadow: 0 15px 40px rgba(0,0,0,0.4);
     animation: fadeInScale 0.3s ease-out;
 }
 
 .close-btn {
-    position: absolute; /* top-right of modal */
+    position: absolute; 
     top: 15px;
     right: 15px;
     font-size: 28px;
@@ -100,11 +100,11 @@ body {
     color: #ff9800;
 }
 
-/* Separate container for form content so it can be centered */
+
 .modal-content-area {
     display: flex;
     flex-direction: column;
-    align-items: center; /* centers the form */
+    align-items: center; 
     justify-content: center;
     gap: 20px;
 }
@@ -122,8 +122,8 @@ body {
 }
 
 .modal-tab-btn.active {
-    color: #008080; /* Teal */
-    border-bottom-color: #ffc107; /* Gold */
+    color: #008080; 
+    border-bottom-color: #ffc107; 
 }
 
 .about-us-content h2 {
@@ -135,12 +135,12 @@ body {
     line-height: 1.6;
 }
 
-/* --- HERO SECTION --- */
+
 .hero-section {
     display: flex;
     align-items: center;
-    padding: 160px 5% 80px 5%; /* Added top padding for distance from top */
-    background: #008080; /* Teal Background */
+    padding: 160px 5% 80px 5%; 
+    background: #008080; 
     color: white;
     gap: 40px;
     overflow: hidden;
@@ -202,7 +202,7 @@ body {
     color: #008080;
 }
 
-/* HERO IMAGE */
+
 .hero-image {
     flex: 1;
     text-align: right;
@@ -217,7 +217,7 @@ body {
     object-fit: cover;
 }
 
-/* --- OBJECTIVES SECTION --- */
+
 .impact-section {
     padding: 60px 5%;
     text-align: center;
@@ -281,7 +281,7 @@ body {
     font-size: 0.95em;
 }
 
-/* --- FOOTER --- */
+
 .footer {
     text-align: center;
     padding: 25px 5%;
@@ -290,9 +290,7 @@ body {
     font-size: 0.9em;
 }
 
-/* -------------------------------------------------------------------
- * RESPONSIVENESS
- * ------------------------------------------------------------------- */
+
 @media (max-width: 800px) {
     .hero-section {
         flex-direction: column;
@@ -341,7 +339,7 @@ body {
     }
 }
 
-/* Keyframe for modal animation */
+
 @keyframes fadeInScale {
     from {
         opacity: 0;

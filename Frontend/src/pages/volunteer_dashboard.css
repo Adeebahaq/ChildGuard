@@ -2,33 +2,32 @@
 .dashboard-tabs {
     display: flex;
     gap: 10px;
-    background-color: #008080; /* Teal background */
+    background-color: #008080; 
     padding: 10px 20px;
     border-radius: 8px;
     margin-bottom: 20px;
 }
 
-/* Individual tab button */
+
 .dashboard-tabs button {
     flex: 1;
-    padding: 12px 20px; /* Increased padding for larger look */
-    background-color: #008080; /* Default teal */
+    padding: 12px 20px; 
+    background-color: #008080; 
     color: white;
     font-weight: 600;
-    font-size: 1.2em; /* Increased font size */
+    font-size: 1.2em; 
     border: none;
     border-radius: 5px;
     cursor: pointer;
     transition: all 0.3s ease;
 }
 
-/* Active tab */
+
 .dashboard-tabs button.active {
-    background-color: #ffc107; /* Gold */
-    color: #008080; /* Teal text on gold */
+    background-color: #ffc107; 
+    color: #008080; 
 }
 
-/* Hover effect for inactive tabs */
 .dashboard-tabs button:not(.active):hover {
-    background-color: #006666; /* Darker teal on hover */
+    background-color: #006666; 
 }

@@ -1,5 +1,5 @@
 // src/models/sponsor.ts
-import { UserModel, User } from "./user"; // Import User
+import { UserModel, User } from "./User"; // Import User
 import { BaseModel } from "./BaseModels";
 
 // Define the Sponsor extension fields

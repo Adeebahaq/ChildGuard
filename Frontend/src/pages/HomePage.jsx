@@ -3,13 +3,13 @@ import LoginPage from '../components/auth/LoginPage';
 import RegisterPage from '../components/auth/RegisterPage';
 import ReportCase from "../components/case/ReportCase";
 import './HomePage.css';
-import HeroImage from '../assets/child-future-contrast.jpg'; // Ensure correct path
+import HeroImage from '../assets/child-future-contrast.jpg'; 
 
 function HomePage() {
   const [activeTab, setActiveTab] = useState('login');
   const [isPanelOpen, setIsPanelOpen] = useState(false);
 
-  // Core objectives
+  
   const roles = [
     { title: "End Child Labor", icon: "🤝", description: "Protect children from exploitation and hazardous agricultural work." },
     { title: "Educational Support", icon: "📚", description: "Provide full sponsorship covering fees, books, and uniforms." },
@@ -27,14 +27,14 @@ function HomePage() {
   return (
     <div className="home-page-container">
 
-      {/* TOP-RIGHT NAVIGATION */}
+      {}
       <nav className="auth-top-right">
         <button className="top-tab" onClick={() => openPanel('login')}>Login</button>
         <button className="top-tab register-btn" onClick={() => openPanel('register')}>Register</button>
         <button className="top-tab about-btn" onClick={() => openPanel('about')}>About Us</button>
       </nav>
 
-      {/* MODAL PANEL */}
+      {}
       {isPanelOpen && (
         <div className="auth-modal-overlay" onClick={closeModal}>
           <div className="auth-modal" onClick={e => e.stopPropagation()}>
@@ -66,7 +66,7 @@ function HomePage() {
         </div>
       )}
 
-      {/* HERO SECTION */}
+      {}
       <section className="hero-section">
         <div className="hero-content">
           <h1 className="hero-title">Protecting Children, Building Futures</h1>
@@ -83,7 +83,7 @@ function HomePage() {
         </div>
       </section>
 
-      {/* OBJECTIVES SECTION */}
+      {}
       <section className="impact-section">
         <h2>Our Core Objectives</h2>
         <div className="objectives-container">
@@ -97,7 +97,7 @@ function HomePage() {
         </div>
       </section>
 
-      {/* FOOTER */}
+      {}
       <footer className="footer">
         &copy; 2025 ChildGuard. All Rights Reserved.
       </footer>

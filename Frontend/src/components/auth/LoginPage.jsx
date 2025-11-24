@@ -1,9 +1,9 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
-import './LoginPage.css'; // Use the same CSS as RegisterPage for consistency
+import './LoginPage.css'; // Make sure your CSS is included
 
-function LoginPage() {
+function LoginPage({ onForgotPassword }) {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
@@ -19,41 +19,30 @@ function LoginPage() {
 
     try {
       const API_URL = 'http://localhost:5000/api/auth/login';
+      const response = await axios.post(API_URL, { email, password });
 
-      const response = await axios.post(API_URL, {
-        email,
-        password,
-      });
-
-      // --- START: CORRECTION HERE ---
-      // The role and user_id are inside the 'user' object in the response.
       const { token, user } = response.data; 
       const role = user.role;
-      const userId = user.user_id; // This is the ID used in the volunteer path
-      // --- END: CORRECTION HERE ---
+      const userId = user.user_id; 
 
       localStorage.setItem('authToken', token);
 
-      console.log('Login Successful, Token:', token);
       setSuccess('Login successful! Redirecting...');
       setEmail('');
       setPassword('');
 
-      // Redirect based on role
       if (role === 'volunteer') {
         if (!userId) {
           setError('User ID (volunteer ID) missing from backend response.');
           setLoading(false);
           return;
         }
-        // Use the extracted userId for the dashboard path
         navigate(`/volunteer/${userId}/dashboard`); 
       } else {
-        navigate('/'); // All other roles go to home page
+        navigate('/'); 
       }
     } catch (err) {
       console.error('Login Error:', err);
-
       if (err.response) {
         setError(err.response.data.message || 'Invalid email or password.');
       } else if (err.request) {
@@ -67,11 +56,10 @@ function LoginPage() {
   };
 
   return (
-    <div className="register-container">
+    <div className="login-container">
       <h1>Login</h1>
 
-      <form onSubmit={handleSubmit}>
-
+      <form className="login-form" onSubmit={handleSubmit}>
         {error && <p className="error-message">{error}</p>}
         {success && <p className="success-message">{success}</p>}
 
@@ -97,9 +85,23 @@ function LoginPage() {
           />
         </div>
 
-        <button type="submit" disabled={loading}>
+        <button type="submit" className="submit-btn" disabled={loading}>
           {loading ? 'Logging In...' : 'Log In'}
         </button>
+
+        {/* Forgot Password link */}
+        <p className="forgot-password">
+          <a
+            href="#"
+            className="link-btn"
+            onClick={(e) => {
+              e.preventDefault();
+              if (onForgotPassword) onForgotPassword();
+            }}
+          >
+            Forgot Password?
+          </a>
+        </p>
       </form>
     </div>
   );

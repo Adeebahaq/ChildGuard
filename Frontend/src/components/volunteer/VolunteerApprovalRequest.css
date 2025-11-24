@@ -1,35 +1,40 @@
-/* Main container box (FORM SIZE REDUCED) */
+/* Main container box */
 .approval-box {
     background: #ffffff;
-    padding: 25px;
-    border-radius: 12px;
-    box-shadow: 0px 2px 8px rgba(0,0,0,0.1);
-    margin: 20px auto;
+    padding: 35px 30px;
+    border-radius: 14px;
+    box-shadow: 0px 4px 12px rgba(0,0,0,0.15);
+    margin: 25px auto;
+    width: 820px;
+    max-width: 95%;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
 
-    /* ↓↓↓ FORM SIZE CONTROL ↓↓↓ */
-    width: 420px;          /* make form smaller */
-    max-width: 90%;        /* responsive on mobile */
+.approval-box:hover {
+    transform: translateY(-2px);
+    box-shadow: 0px 6px 18px rgba(0,0,0,0.18);
 }
 
 /* Title */
 .approval-box h2 {
-    font-size: 1.6em;
+    font-size: 1.75em;
     font-weight: 700;
     color: #008080;
-    margin-bottom: 18px;
+    margin-bottom: 20px;
+    text-align: center;
 }
 
 /* Section subtitle */
 .approval-box h3 {
-    font-size: 1.2em;
+    font-size: 1.25em;
     color: #008080;
-    margin-top: 15px;
-    margin-bottom: 8px;
+    margin-top: 18px;
+    margin-bottom: 10px;
 }
 
 /* Input groups */
 .input-group {
-    margin-bottom: 16px;
+    margin-bottom: 18px;
     display: flex;
     flex-direction: column;
 }
@@ -38,51 +43,57 @@
 .input-group label {
     font-weight: 600;
     color: #333;
-    margin-bottom: 5px;
+    margin-bottom: 6px;
 }
 
-/* Smaller width input fields */
+/* Input fields */
 .input-group input {
-    width: 230px;          /* smaller fields */
-    padding: 9px;
+    width: 260px;
+    padding: 10px;
     border: 2px solid #ccc;
-    border-radius: 8px;
+    border-radius: 10px;
     font-size: 1em;
     outline: none;
-    transition: border 0.2s ease;
+    transition: border 0.2s ease, box-shadow 0.2s ease;
 }
 
-/* Input focus */
 .input-group input:focus {
     border-color: #008080;
+    box-shadow: 0 0 6px rgba(0, 128, 128, 0.3);
 }
 
-/* Availability grid */
-.availability-grid {
+/* Two-column grid for days of week */
+.availability-grid.days-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 2px 1px;
+    margin-bottom: 18px;
+}
+
+/* Time slots remain single column */
+.availability-grid:not(.days-grid) {
     display: flex;
     flex-direction: column;
-    gap: 8px;
-    margin-bottom: 18px;
+    gap: 10px;
 }
 
 /* Checkbox / radio items */
 .checkbox-item {
     display: flex;
     align-items: center;
-    gap: 8px;
-    padding: 2px 0;
+    gap: 10px;
+    padding: 3px 0;
+    cursor: pointer;
 }
 
-/* Individual inputs */
 .checkbox-item input {
-    width: 18px;
-    height: 18px;
-    cursor: pointer;
+    width: 20px;
+    height: 20px;
 }
 
 /* Text label */
 .checkbox-item label {
-    font-size: 1.05em;
+    font-size: 1.1em;
     color: #333;
     font-weight: 500;
 }
@@ -97,23 +108,41 @@
 .btn-primary {
     background-color: #008080;
     color: white;
-    padding: 10px 22px;
-    font-size: 1.1em;
+    padding: 12px 28px;
+    font-size: 1.15em;
     border: none;
     cursor: pointer;
-    border-radius: 8px;
+    border-radius: 10px;
     font-weight: 600;
-    transition: background 0.3s ease;
-    margin-top: 10px;
+    transition: background 0.3s ease, transform 0.1s ease;
+    margin-top: 20px;
+    display: block;
+    text-align: center;
 }
 
-/* Hover */
 .btn-primary:hover:not(:disabled) {
     background-color: #006666;
 }
 
-/* Disabled */
+.btn-primary:active:not(:disabled) {
+    transform: scale(0.97);
+}
+
 .btn-primary:disabled {
     opacity: 0.6;
     cursor: not-allowed;
+}
+
+/* Responsive adjustments */
+@media (max-width: 600px) {
+    .approval-box {
+        width: 95%;
+        padding: 25px 20px;
+    }
+    .input-group input {
+        width: 100%;
+    }
+    .availability-grid.days-grid {
+        grid-template-columns: 1fr; /* stack days on small screens */
+    }
 }

@@ -19,10 +19,8 @@ app.use('/', indexRouter);
 app.use('/api/auth', authRoutes);
 app.use("/case", caseReporterRoutes); 
 app.use("/visits", visitsRoutes);
-
 app.use("/volunteer", volunteerRoutes);
 app.use("/user", userRoutes);
-
 app.use("/availability", userRoutes);
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);

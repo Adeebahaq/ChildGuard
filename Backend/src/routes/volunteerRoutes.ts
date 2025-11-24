@@ -6,17 +6,14 @@ import { VolunteerModel } from "../models/volunteer";
 const router = Router();
 router.use(authMiddleware);
 
-// ===============================
-// GET volunteer by ID (volunteer_id = user_id)
-// If not found, create a new volunteer with 'pending' status
-// ===============================
+
 router.get("/:volunteerId", async (req, res) => {
   const { volunteerId } = req.params;
 
   try {
     let volunteer = await VolunteerModel.getById(volunteerId);
 
-    // If volunteer does not exist, create a new one
+   
     if (!volunteer) {
       volunteer = await VolunteerModel.create(volunteerId);
     }
@@ -29,10 +26,7 @@ router.get("/:volunteerId", async (req, res) => {
   }
 });
 
-// ===============================
-// PUT update availability
-// Expected body: { days: [], time: "" }
-// ===============================
+
 router.put("/:volunteerId/availability", async (req, res) => {
   const { volunteerId } = req.params;
   const availability = req.body;
@@ -51,10 +45,7 @@ router.put("/:volunteerId/availability", async (req, res) => {
   }
 });
 
-// ===============================
-// POST request approval
-// Expected body: { phone: string, area: string, availability: { days: [], time: "" } }
-// ===============================
+
 router.post("/:volunteerId/request", async (req, res) => {
   const { volunteerId } = req.params;
   const { phone = "", area = "", availability = { days: [], time: "" } } = req.body;

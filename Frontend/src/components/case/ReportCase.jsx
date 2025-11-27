@@ -36,6 +36,7 @@ const ReportCase = ({ userId = null }) => {
       const res = await axios.post("http://localhost:5000/case/report", payload);
       if (res.data.success) {
         setStatus("Report submitted successfully!");
+
         setFormData({
           location: "",
           description: "",
@@ -56,46 +57,50 @@ const ReportCase = ({ userId = null }) => {
     <div className="report-case-form">
       <h2>Report a Case</h2>
       {status && <p className="status-message">{status}</p>}
-      <form onSubmit={handleSubmit}>
-        <div className="form-group">
-          <label>Your Phone (optional):</label>
-          <input type="text" name="phone" value={formData.phone} onChange={handleChange} />
-        </div>
 
-        <div className="form-group checkbox-group">
-          <label>
-            <input type="checkbox" name="is_anonymous" checked={formData.is_anonymous} onChange={handleChange} />
-            Anonymous
-          </label>
-        </div>
+      {/* Scrollable content inside modal */}
+      <div className="modal-scrollable-content">
+        <form onSubmit={handleSubmit}>
+          <div className="form-group">
+            <label>Your Phone (optional):</label>
+            <input type="text" name="phone" value={formData.phone} onChange={handleChange} />
+          </div>
 
-        <div className="form-group">
-          <label>Location:</label>
-          <input type="text" name="location" value={formData.location} onChange={handleChange} required />
-        </div>
+          <div className="form-group checkbox-group">
+            <label>
+              <input type="checkbox" name="is_anonymous" checked={formData.is_anonymous} onChange={handleChange} />
+              Anonymous
+            </label>
+          </div>
 
-        <div className="form-group">
-          <label>Description:</label>
-          <textarea name="description" value={formData.description} onChange={handleChange} required />
-        </div>
+          <div className="form-group">
+            <label>Location:</label>
+            <input type="text" name="location" value={formData.location} onChange={handleChange} required />
+          </div>
 
-        <div className="form-group">
-          <label>Child Name:</label>
-          <input type="text" name="child_name" value={formData.child_name} onChange={handleChange} />
-        </div>
+          <div className="form-group">
+            <label>Description:</label>
+            <textarea name="description" value={formData.description} onChange={handleChange} required />
+          </div>
 
-        <div className="form-group">
-          <label>Child Age:</label>
-          <input type="number" name="child_age" value={formData.child_age} onChange={handleChange} />
-        </div>
+          <div className="form-group">
+            <label>Child Name:</label>
+            <input type="text" name="child_name" value={formData.child_name} onChange={handleChange} />
+          </div>
 
-        <div className="form-group">
-          <label>Photo URL:</label>
-          <input type="text" name="photo_url" value={formData.photo_url} onChange={handleChange} />
-        </div>
+          <div className="form-group">
+            <label>Child Age:</label>
+            <input type="number" name="child_age" value={formData.child_age} onChange={handleChange} />
+          </div>
 
-        <button type="submit" className="cta-btn">Submit Report</button>
-      </form>
+          <div className="form-group">
+            <label>Photo URL:</label>
+            <input type="text" name="photo_url" value={formData.photo_url} onChange={handleChange} />
+          </div>
+
+          <button type="submit" className="cta-btn">Submit Report</button>
+        </form>
+      </div>
     </div>
   );
 };

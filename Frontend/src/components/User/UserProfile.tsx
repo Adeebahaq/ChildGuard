@@ -3,7 +3,7 @@ import React, { useEffect, useState } from "react";
 import axios from "axios";
 import "./UserProfile.css";
 export interface UserProfileProps {
-  userId: string; // pass the user ID to fetch
+  userId: string; 
 }
 
 export interface UserProfileData {
@@ -32,12 +32,12 @@ const UserProfile: React.FC<UserProfileProps> = ({ userId }) => {
       try {
         const token = localStorage.getItem("authToken");
 
-        // API call to fetch user profile
+        
         const res = await axios.get(`${API_URL}user/profile/${userId}`, {
           headers: { Authorization: `Bearer ${token}` },
         });
 
-        // Use res.data directly if backend returns the user object
+        
         setProfile(res.data); 
       } catch (err) {
         console.error(err);

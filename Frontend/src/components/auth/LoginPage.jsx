@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import './LoginPage.css';
 
-function LoginPage() {
+function LoginPage({ onForgotPassword }) {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
@@ -19,10 +19,9 @@ function LoginPage() {
 
     try {
       const API_URL = 'http://localhost:5000/api/auth/login';
-
       const response = await axios.post(API_URL, { email, password });
 
-      // Destructure token and user from response
+      // Extract token and user
       const { token, user } = response.data;
 
       if (!token || !user) {
@@ -31,22 +30,33 @@ function LoginPage() {
         return;
       }
 
-      // ✅ Store both token and user in localStorage
+      const role = user.role;
+      const userId = user.user_id;
+
+      // Store data
       localStorage.setItem('authToken', token);
       localStorage.setItem('user', JSON.stringify(user));
-
-      console.log('Login Successful, Token:', token, 'User:', user);
 
       setSuccess('Login successful! Redirecting...');
       setEmail('');
       setPassword('');
 
       // Redirect based on role
-      if (user.role === 'volunteer') {
-        navigate(`/volunteer/${user.user_id}/dashboard`);
-      } else if (user.role === 'parent') {
-        navigate(`/parent/dashboard`);
-      } else {
+      if (role === 'volunteer') {
+        if (!userId) {
+          setError('User ID missing from backend.');
+          setLoading(false);
+          return;
+        }
+        navigate(`/volunteer/${userId}/dashboard`);
+      } 
+      else if (role === 'parent') {
+        navigate('/parent/dashboard');
+      }
+      else if (role === 'admin') {
+        navigate('/admin');
+      } 
+      else {
         navigate('/');
       }
 
@@ -65,10 +75,10 @@ function LoginPage() {
   };
 
   return (
-    <div className="register-container">
+    <div className="login-container">
       <h1>Login</h1>
 
-      <form onSubmit={handleSubmit}>
+      <form className="login-form" onSubmit={handleSubmit}>
         {error && <p className="error-message">{error}</p>}
         {success && <p className="success-message">{success}</p>}
 
@@ -94,9 +104,22 @@ function LoginPage() {
           />
         </div>
 
-        <button type="submit" disabled={loading}>
+        <button type="submit" className="submit-btn" disabled={loading}>
           {loading ? 'Logging In...' : 'Log In'}
         </button>
+
+        <p className="forgot-password">
+          <a
+            href="#"
+            className="link-btn"
+            onClick={(e) => {
+              e.preventDefault();
+              if (onForgotPassword) onForgotPassword();
+            }}
+          >
+            Forgot Password?
+          </a>
+        </p>
       </form>
     </div>
   );

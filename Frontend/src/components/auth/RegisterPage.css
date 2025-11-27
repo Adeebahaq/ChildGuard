@@ -1,7 +1,4 @@
 /* Registration Form Container */
-
-
-/* Form Groups */
 .form-group {
     display: flex;
     flex-direction: column;
@@ -11,10 +8,10 @@
 .form-group label {
     margin-bottom: 8px;
     font-weight: 600;
-    color: #008080; /* Teal label */
+    color: #008080; 
 }
 
-/* Text Inputs and Select Dropdown */
+
 .form-group input,
 .form-group select {
     padding: 10px 15px;
@@ -27,15 +24,15 @@
 
 .form-group input:focus,
 .form-group select:focus {
-    border-color: #ffc107; /* Gold highlight on focus */
+    border-color: #ffc107; 
     box-shadow: 0 0 5px rgba(255, 193, 7, 0.5);
 }
 
-/* Submit Button */
+
 button[type="submit"] {
     width: 100%;
     padding: 12px;
-    background-color: #ffc107; /* Gold */
+    background-color: #ffc107; 
     color: #333;
     font-weight: 700;
     border: none;

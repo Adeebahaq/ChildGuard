@@ -1,83 +1,18 @@
-/* Login Form Container */
-.login-container {
-    max-width: 400px;
-    margin: 40px auto;
-    padding: 30px 25px;
-    background: #ffffff;
-    border-radius: 12px;
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
-    font-family: 'Inter', sans-serif;
-}
-
-/* Form Heading */
-.login-container h1 {
-    text-align: center;
-    color: #008080; /* Teal heading */
-    margin-bottom: 25px;
-    font-size: 2em;
-}
-
-/* Form Groups */
-.login-form .form-group {
-    display: flex;
-    flex-direction: column;
-    margin-bottom: 20px;
-}
-
-.login-form .form-group label {
-    margin-bottom: 8px;
-    font-weight: 600;
-    color: #008080; /* Teal label */
-}
-
-/* Text Inputs */
-.login-form .form-group input {
-    padding: 10px 15px;
-    font-size: 1em;
-    border: 1px solid #ccc;
-    border-radius: 8px;
-    outline: none;
-    transition: all 0.3s ease;
-}
-
-.login-form .form-group input:focus {
-    border-color: #ffc107; /* Gold highlight */
-    box-shadow: 0 0 5px rgba(255, 193, 7, 0.5);
-}
-
-/* Submit Button */
-.submit-btn {
-    width: 100%;
-    padding: 12px;
-    background-color: #ffc107; /* Gold */
-    color: #333;
-    font-weight: 700;
+.link-btn {
+    background: none;
     border: none;
-    border-radius: 25px;
+    color: #008080;
     cursor: pointer;
-    transition: all 0.3s ease;
+    text-decoration: underline;
+    font-size: 0.95em;
+    padding: 0;
 }
 
-.submit-btn:hover {
-    background-color: #ff9800; /* Darker gold */
-    color: #fff;
+.link-btn:hover {
+    color: #006666;
 }
 
-/* Error and Success Messages */
-.error-message {
-    background-color: #ffe6e6;
-    color: #cc0000;
-    padding: 10px;
-    border-radius: 8px;
-    margin-bottom: 15px;
-    text-align: center;
-}
-
-.success-message {
-    background-color: #e6ffea;
-    color: #007700;
-    padding: 10px;
-    border-radius: 8px;
-    margin-bottom: 15px;
-    text-align: center;
+.forgot-password {
+    text-align: right;
+    margin-top: 10px;
 }

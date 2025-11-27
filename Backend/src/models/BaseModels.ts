@@ -4,9 +4,10 @@ import * as BetterSqlite3 from "better-sqlite3";
 
 // This is your singleton DB
 export class BaseModel {
+
     public static db: BetterSqlite3.Database;
 
-    // This runs automatically when any model is first used
+    // Runs automatically when any model is first used
     static init(): void {
         if (!this.db) {
             this.db = DatabaseConnection.getInstance();
@@ -14,11 +15,11 @@ export class BaseModel {
         }
     }
 
-    // Optional: Helper to run init early (recommended)
+    // Optional: Helper to run init early
     static ensureInitialized() {
         this.init();
     }
 }
 
 // AUTO-INITIALIZE WHEN THIS FILE IS IMPORTED
-BaseModel.init();   // ← THIS IS THE MISSING LINE THAT FIXES EVERYTHING
+BaseModel.init();   // ← REQUIRED LINE

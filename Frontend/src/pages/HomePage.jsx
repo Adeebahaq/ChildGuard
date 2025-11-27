@@ -1,21 +1,39 @@
-import React, { useState } from 'react';
+// src/pages/HomePage.jsx
+import React, { useState, useEffect } from 'react';
+import axios from 'axios';
 import LoginPage from '../components/auth/LoginPage';
 import RegisterPage from '../components/auth/RegisterPage';
 import ReportCase from "../components/case/ReportCase";
 import './HomePage.css';
-import HeroImage from '../assets/child-future-contrast.jpg'; // Ensure correct path
+import HeroImage from '../assets/child-future-contrast.jpg';
 
 function HomePage() {
   const [activeTab, setActiveTab] = useState('login');
   const [isPanelOpen, setIsPanelOpen] = useState(false);
+  const [awarenessContent, setAwarenessContent] = useState([]);
+  const [loading, setLoading] = useState(true);
 
-  // Core objectives
   const roles = [
-    { title: "End Child Labor", icon: "🤝", description: "Protect children from exploitation and hazardous agricultural work." },
-    { title: "Educational Support", icon: "📚", description: "Provide full sponsorship covering fees, books, and uniforms." },
-    { title: "Community Advocacy", icon: "📣", description: "Raise awareness about child rights and facilitate anonymous reporting." },
-    { title: "Transparent Tracking", icon: "✅", description: "Offer sponsors and parents real-time updates on child progress." },
+    { title: "End Child Labor", icon: "Handshake", description: "Protect children from exploitation and hazardous agricultural work." },
+    { title: "Educational Support", icon: "Books", description: "Provide full sponsorship covering fees, books, and uniforms." },
+    { title: "Community Advocacy", icon: "Megaphone", description: "Raise awareness about child rights and facilitate anonymous reporting." },
+    { title: "Transparent Tracking", icon: "Checkmark", description: "Offer sponsors and parents real-time updates on child progress." },
   ];
+
+  // Fetch published awareness content (public endpoint)
+  useEffect(() => {
+    const fetchAwareness = async () => {
+      try {
+        const res = await axios.get("http://localhost:5000/api/awareness");
+        setAwarenessContent(res.data.data || []);
+      } catch (err) {
+        console.error("Failed to load awareness content", err);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchAwareness();
+  }, []);
 
   const openPanel = (tab) => {
     setActiveTab(tab);
@@ -24,22 +42,58 @@ function HomePage() {
 
   const closeModal = () => setIsPanelOpen(false);
 
+  // Helper: Convert YouTube watch URL to embed
+  const getEmbedUrl = (url) => {
+    if (!url) return "";
+    return url.replace("watch?v=", "embed/").replace("&", "?");
+  };
+
+  // NEW: Open full article in beautiful popup
+  const openFullArticle = (item) => {
+    const win = window.open('', '_blank', 'width=900,height=700,scrollbars=yes,resizable=yes');
+    win.document.write(`
+      <!DOCTYPE html>
+      <html lang="en">
+      <head>
+        <meta charset="UTF-8">
+        <title>${item.title} - ChildGuard</title>
+        <style>
+          body { margin:0; font-family: 'Segoe UI', sans-serif; background:#f8fcfc; padding:40px; line-height:1.8; color:#333; }
+          .container { max-width:800px; margin:0 auto; background:white; padding:40px; border-radius:16px; box-shadow:0 10px 30px rgba(0,0,0,0.1); }
+          h1 { color:#006666; font-size:2.3rem; border-bottom:4px solid #FFD700; padding-bottom:12px; margin-bottom:20px; }
+          .date { color:#888; font-style:italic; margin-bottom:30px; font-size:1rem; }
+          .content { font-size:1.1rem; }
+          .close { text-align:center; margin-top:50px; }
+          .close a { color:#006666; font-weight:600; text-decoration:none; font-size:1.1rem; }
+          .close a:hover { color:#FFD700; }
+        </style>
+      </head>
+      <body>
+        <div class="container">
+          <h1>${item.title.replace(/</g, '&lt;').replace(/>/g, '&gt;')}</h1>
+          <p class="date">Published on: ${item.published_at ? new Date(item.published_at).toLocaleDateString('en-GB') : 'Recently'}</p>
+          <div class="content">${item.content}</div>
+          <div class="close"><a href="javascript:window.close()">Close window</a></div>
+        </div>
+      </body>
+      </html>
+    `);
+    win.document.close();
+  };
+
   return (
     <div className="home-page-container">
-
-      {/* TOP-RIGHT NAVIGATION */}
-      <nav className="auth-top-right">
+      {/* Your existing nav and modal code */}
+      <nav className="auth-top-right" onClick={(e) => e.preventDefault()}>
         <button className="top-tab" onClick={() => openPanel('login')}>Login</button>
         <button className="top-tab register-btn" onClick={() => openPanel('register')}>Register</button>
         <button className="top-tab about-btn" onClick={() => openPanel('about')}>About Us</button>
       </nav>
 
-      {/* MODAL PANEL */}
       {isPanelOpen && (
         <div className="auth-modal-overlay" onClick={closeModal}>
           <div className="auth-modal" onClick={e => e.stopPropagation()}>
-            <button className="close-btn" onClick={closeModal}>&times;</button>
-
+            <button className="close-btn" onClick={closeModal}>×</button>
             <div className="form-body">
               <div className="modal-content-area">
                 {activeTab === 'login' && <LoginPage />}
@@ -47,26 +101,18 @@ function HomePage() {
                 {activeTab === 'about' && (
                   <div className="about-us-content">
                     <h2>ChildGuard: Our Mission</h2>
-                    <p>
-                      ChildGuard is a web-based platform dedicated to protecting children from labor 
-                      exploitation by automating educational sponsorship applications and facilitating 
-                      anonymous incident reporting.
-                    </p>
-                    <p>
-                      Our mission is to end child labor, support families, and build stronger 
-                      communities through transparent collaboration between parents, sponsors, and NGOs.
-                    </p>
+                    <p>ChildGuard is a web-based platform dedicated to protecting children from labor exploitation...</p>
                     <button className="cta-btn" onClick={() => openPanel('register')}>Join the Cause</button>
                   </div>
                 )}
-                {activeTab === 'report' && <ReportCase userId={null} />} {/* null for anonymous */}
+                {activeTab === 'report' && <ReportCase userId={null} />}
               </div>
             </div>
           </div>
         </div>
       )}
 
-      {/* HERO SECTION */}
+      {/* Hero Section */}
       <section className="hero-section">
         <div className="hero-content">
           <h1 className="hero-title">Protecting Children, Building Futures</h1>
@@ -83,7 +129,7 @@ function HomePage() {
         </div>
       </section>
 
-      {/* OBJECTIVES SECTION */}
+      {/* Core Objectives */}
       <section className="impact-section">
         <h2>Our Core Objectives</h2>
         <div className="objectives-container">
@@ -97,7 +143,68 @@ function HomePage() {
         </div>
       </section>
 
-      {/* FOOTER */}
+      {/* NEW: Awareness & Updates Section (Public) */}
+      <section className="awareness-section">
+        <h2>Public Awareness Content</h2>
+        {loading ? (
+          <p>Loading latest updates...</p>
+        ) : awarenessContent.length === 0 ? (
+          <p>No published content yet. Check back soon!</p>
+        ) : (
+          <div className="awareness-grid">
+            {awarenessContent.map((item) => (
+              <div
+                key={item.content_id}
+                className="awareness-card awareness-card-clickable"
+                onClick={() => {
+                  if (item.type === 'article' || item.type === 'guide') {
+                    openFullArticle(item);
+                  } else if (item.type === 'video' && item.content.includes('youtube.com')) {
+                    window.open(item.content, '_blank');
+                  }
+                }}
+                title={item.type === 'video' ? "Click to watch on YouTube" : "Click to read full article"}
+              >
+                {/* Show YouTube Video */}
+                {item.type === 'video' && item.content.includes('youtube.com') && (
+                  <div className="awareness-video-wrapper">
+                    <iframe
+                      src={getEmbedUrl(item.content)}
+                      title={item.title}
+                      allowFullScreen
+                      className="awareness-video"
+                    ></iframe>
+                  </div>
+                )}
+
+                {/* Show Article/Guide Content */}
+                <div className="awareness-text">
+                  <h3>{item.title}</h3>
+                  <p 
+                    dangerouslySetInnerHTML={{ 
+                      __html: item.content.length > 280 
+                        ? item.content.substring(0, 280) + "..." 
+                        : item.content 
+                    }} 
+                  />
+                  <div className="awareness-footer">
+                    <small>
+                      Published on: {item.published_at ? new Date(item.published_at).toLocaleDateString() : "Recently"}
+                    </small>
+                    {(item.type === 'article' || item.type === 'guide') && item.content.length > 280 && (
+                      <span className="read-more">Read full article →</span>
+                    )}
+                    {item.type === 'video' && (
+                      <span className="read-more">Watch Video →</span>
+                    )}
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
+      </section>
+
       <footer className="footer">
         &copy; 2025 ChildGuard. All Rights Reserved.
       </footer>

@@ -6,9 +6,7 @@ import { BaseModel } from "../models/BaseModels";
 const router = Router();
 router.use(authMiddleware);
 
-// ==========================
-// GET visits assigned to a volunteer
-// ==========================
+
 router.get("/volunteer/:volunteerId", async (req, res) => {
     try {
         BaseModel.init();
@@ -30,9 +28,7 @@ router.get("/volunteer/:volunteerId", async (req, res) => {
     }
 });
 
-// ==========================
-// PUT feedback and mark visit as completed
-// ==========================
+
 router.put("/:visitId/feedback", async (req, res) => {
     try {
         BaseModel.init();

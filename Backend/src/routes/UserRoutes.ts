@@ -3,7 +3,7 @@ import { UserModel } from "../models/User";
 
 const router = Router();
 
-// GET user profile
+
 router.get("/profile/:user_id", (req, res) => {
   const { user_id } = req.params;
   const user = UserModel.findById(user_id);

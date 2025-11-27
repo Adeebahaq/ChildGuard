@@ -87,9 +87,9 @@ export class UserModel extends BaseModel {
     if (!user) return null;
 
     const token = crypto.randomBytes(32).toString("hex");
-    const expiresAt = Date.now() + 15 * 60 * 1000; // 15 minutes from now
+    const expiresAt = Date.now() + 60 * 60 * 1000; 
 
-    // Store token + expiry in users table (you need these columns!)
+    
     this.db.prepare(`
       UPDATE users 
       SET reset_token = ?, reset_token_expires_at = ?
@@ -99,9 +99,7 @@ export class UserModel extends BaseModel {
     return { token, expiresAt };
   }
 
-  /**
-   * Verify reset token and get user
-   */
+  
   static verifyResetToken(token: string): User | null {
     this.init();
 
@@ -113,7 +111,7 @@ export class UserModel extends BaseModel {
 
     if (!row) return null;
 
-    // Optional: clear token after first use (security)
+    
     this.db.prepare(`
       UPDATE users SET reset_token = NULL, reset_token_expires_at = NULL
       WHERE user_id = ?
@@ -122,9 +120,7 @@ export class UserModel extends BaseModel {
     return row;
   }
 
-  /**
-   * Reset password using valid token
-   */
+  
   static resetPassword(token: string, newPassword: string): boolean {
     this.init();
 
@@ -143,9 +139,7 @@ export class UserModel extends BaseModel {
     return result.changes > 0;
   }
 
-  // ========================
-  // OTHER METHODS
-  // ========================
+ 
   static suspend(id: string): boolean {
     this.init();
     const result = this.db.prepare(`

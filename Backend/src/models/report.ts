@@ -16,7 +16,7 @@ export interface Report {
 }
 
 // ------------------------
-// Prepare Statements
+// Prepared Statements
 // ------------------------
 const insertStmt = BaseModel.db.prepare(`
   INSERT INTO reports 
@@ -34,7 +34,47 @@ const updateStatusStmt = BaseModel.db.prepare(`UPDATE reports SET status = ? WHE
 // ------------------------
 export class ReportModel extends BaseModel {
 
-  // Create a new report
+  // ------------------------
+  // Submit Report (New Method)
+  // ------------------------
+  static submit(data: {
+    reporter_id?: string;
+    location: string;
+    description?: string;
+    child_name?: string;
+    child_age?: number;
+    photo_url?: string;
+  }): Report {
+    this.init();
+
+    const report: Report = {
+      report_id: crypto.randomUUID(),
+      reporter_id: data.reporter_id ?? null,
+      location: data.location,
+      description: data.description ?? null,
+      child_name: data.child_name ?? null,
+      child_age: data.child_age ?? null,
+      photo_url: data.photo_url ?? null,
+      status: "pending",
+      reported_at: new Date().toISOString()
+    };
+
+    insertStmt.run(
+      report.report_id,
+      report.reporter_id,
+      report.location,
+      report.description,
+      report.child_name,
+      report.child_age,
+      report.photo_url,
+      report.status,
+      report.reported_at
+    );
+
+    return report;
+  }
+
+  // Create a new report (fully custom data)
   static create(data: Report): Report {
     insertStmt.run(
       data.report_id,
@@ -48,7 +88,7 @@ export class ReportModel extends BaseModel {
       data.reported_at ?? new Date().toISOString()
     );
 
-    return this.findById(data.report_id)!; // Guaranteed to exist
+    return this.findById(data.report_id)!;
   }
 
   // Find a report by ID
@@ -59,17 +99,16 @@ export class ReportModel extends BaseModel {
 
   // Get all reports
   static findAll(): Report[] {
-    const rows = selectAllStmt.all() as Report[];
-    return rows;
+    return selectAllStmt.all() as Report[];
   }
 
-  // Delete a report by ID
+  // Delete a report
   static deleteById(id: string): boolean {
     const result = deleteStmt.run(id);
     return result.changes > 0;
   }
 
-  // Update the status of a report
+  // Update status
   static updateStatus(id: string, status: string): Report | null {
     updateStatusStmt.run(status, id);
     return this.findById(id);

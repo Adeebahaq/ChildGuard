@@ -2,14 +2,14 @@
 import { UserModel, User } from "./User";
 import { BaseModel } from "./BaseModels";
 
-// Fields from the "parents" table
+// Extra fields stored in the "parents" table
 export interface ParentExtension {
   parent_id: string;
   phone: string | null;
   address: string | null;
 }
 
-// Final merged type returned by create() and find()
+// Final return type for parent objects
 export type Parent = User & ParentExtension;
 
 export class ParentModel extends BaseModel {
@@ -25,7 +25,7 @@ export class ParentModel extends BaseModel {
   }): Parent {
     this.init();
 
-    // 1. Create main user account
+    // 1. Create main user in the "users" table
     const user = UserModel.create({
       username: data.username,
       email: data.email,
@@ -33,7 +33,7 @@ export class ParentModel extends BaseModel {
       role: "parent",
     });
 
-    // 2. Insert into parents table
+    // 2. Insert into "parents" table
     const insertParent = this.db.prepare(`
       INSERT INTO parents (parent_id, phone, address)
       VALUES (?, ?, ?)
@@ -41,23 +41,23 @@ export class ParentModel extends BaseModel {
 
     insertParent.run(
       user.user_id,
-      data.phone ?? null,   // Accept undefined and convert to NULL
+      data.phone ?? null,
       data.address ?? null
     );
 
-    // 3. Fetch extension fields
+    // 3. Retrieve the parent extension fields
     const extra = this.db.prepare(`
       SELECT parent_id, phone, address
       FROM parents
       WHERE parent_id = ?
     `).get(user.user_id) as ParentExtension;
 
-    // 4. Merge & return final parent object
+    // 4. Merge user + parent extension and return final parent object
     return { ...user, ...extra };
   }
 
   // ------------------------------------------
-  // FIND PARENT BY USER ID (for dashboard, etc)
+  // FIND PARENT BY USER ID (used for dashboard)
   // ------------------------------------------
   static find(user_id: string): Parent | null {
     this.init();
@@ -66,10 +66,10 @@ export class ParentModel extends BaseModel {
     const user = UserModel.findById(user_id);
     if (!user) return null;
 
-    // Ensure role matches
+    // Parent check (ensures no volunteers/admin load parent dashboard)
     if (user.role !== "parent") return null;
 
-    // 2. Fetch parent extension data
+    // 2. Get parent extension fields
     const extra = this.db.prepare(`
       SELECT parent_id, phone, address
       FROM parents
@@ -78,7 +78,7 @@ export class ParentModel extends BaseModel {
 
     if (!extra) return null;
 
-    // 3. Return merged object
+    // 3. Return merged parent object
     return { ...user, ...extra };
   }
 }

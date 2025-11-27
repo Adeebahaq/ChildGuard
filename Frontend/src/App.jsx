@@ -1,6 +1,7 @@
 import { Routes, Route } from 'react-router-dom';
 import HomePage from "./pages/HomePage.jsx";
 import VolunteerDashboard from "./pages/volunteer_dashboard.jsx"; 
+import ParentDashboard from "./pages/ParentDashboard.jsx"; 
 import './App.css';
 
 function App() {
@@ -18,6 +19,10 @@ function App() {
           path="/volunteer/:volunteerId/dashboard"
           element={<VolunteerDashboard />}
         />
+         // app.jsx (Line 18)
+         <Route
+          path="/parent/dashboard" element={<ParentDashboard />} 
+        />
       </Routes>
     </div>
   );

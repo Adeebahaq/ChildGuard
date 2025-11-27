@@ -2,7 +2,7 @@
 import { BaseModel } from './BaseModels';
 
 // === ENSURE DB IS INITIALIZED ===
-BaseModel.init(); // ← This line is CRITICAL
+BaseModel.init(); // ← MUST BE FIRST
 
 export interface Family {
   family_id: string;
@@ -23,13 +23,16 @@ export interface Family {
 }
 
 export class FamilyModel extends BaseModel {
-  // === SAFE PREPARED STATEMENTS (inside class) ===
+  // ---------------------------------------------
+  // STATIC PREPARED STATEMENTS
+  // ---------------------------------------------
   private static get insertFamily() {
     return this.db.prepare(`
       INSERT INTO families (
         family_id, parent_id, income, address, proof_documents,
         number_of_children, verification_status, support_status
-      ) VALUES (?, ?, ?, ?, ?, 0, 'pending', 'none')
+      ) 
+      VALUES (?, ?, ?, ?, ?, 0, 'pending', 'none')
     `);
   }
 
@@ -97,7 +100,18 @@ export class FamilyModel extends BaseModel {
     return this.db.prepare(`DELETE FROM families WHERE family_id = ?`);
   }
 
-  // === CRUD METHODS ===
+  // ⭐ NEW STATEMENT FOR CHILD COUNT UPDATE
+  private static get updateChildrenCountStmt() {
+    return this.db.prepare(`
+      UPDATE families
+      SET number_of_children = ?, updated_at = datetime('now')
+      WHERE family_id = ?
+    `);
+  }
+
+  // -------------------------------------------------------
+  // CRUD METHODS
+  // -------------------------------------------------------
   static create(data: {
     parent_id: string;
     income: number;
@@ -159,5 +173,15 @@ export class FamilyModel extends BaseModel {
       throw new Error('Cannot delete family with registered children');
     }
     this.deleteFamilyStmt.run(family_id);
+  }
+
+  // -------------------------------------------------------
+  // ⭐ UPDATE CHILDREN COUNT
+  // -------------------------------------------------------
+  static updateChildrenCount(family_id: string, count: number): void {
+    const result = this.updateChildrenCountStmt.run(count, family_id);
+    if (result.changes === 0) {
+      throw new Error('Family not found for child count update.');
+    }
   }
 }

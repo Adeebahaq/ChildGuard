@@ -1,0 +1,55 @@
+/* Top tabs container */
+.dashboard-tabs {
+    display: flex;
+    gap: 10px;
+    background-color: #008080; /* Teal background */
+    padding: 10px 20px;
+    border-radius: 8px;
+    margin-bottom: 20px;
+    /* Responsive layout: wrap on small screens */
+    flex-wrap: wrap; 
+}
+
+/* Individual tab button */
+.dashboard-tabs button {
+    flex: 1;
+    min-width: 150px; /* Ensure buttons don't get too small on wrap */
+    padding: 12px 20px; 
+    background-color: #008080; /* Default teal */
+    color: white;
+    font-weight: 600;
+    font-size: 1.2em; 
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    text-align: center;
+}
+
+/* Active tab */
+.dashboard-tabs button.active {
+    background-color: #ffc107; /* Gold */
+    color: #008080; /* Teal text on gold */
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+/* Hover effect for inactive tabs */
+.dashboard-tabs button:not(.active):hover {
+    background-color: #006666; /* Darker teal on hover */
+}
+
+/* Main Dashboard Container */
+.parent-dashboard {
+    max-width: 1200px;
+    margin: 40px auto;
+    padding: 0 20px;
+}
+
+/* General Box Style for Content */
+.dashboard-box {
+    background: #ffffff;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0px 2px 8px rgba(0,0,0,0.1);
+    margin-top: 20px;
+}

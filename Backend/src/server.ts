@@ -11,6 +11,9 @@ import caseReporterRoutes from "./routes/caseReporterRoutes";
 import visitsRoutes from "./routes/visitsRoutes"; // From 'HEAD'
 import volunteerRoutes from "./routes/volunteerRoutes"; // From 'HEAD'
 import userRoutes from "./routes/UserRoutes"; // From 'HEAD'
+import parentRoutes from './routes/parentRoutes'; 
+// ... later in the file ...
+
 
 // ── NEW: Awareness module routes ────────
 import adminRoutes from './routes/adminRoutes'; // From 'HEAD' (Admin-only)
@@ -47,6 +50,8 @@ app.use("/availability", userRoutes);
 // NEW: Mounted awareness routes from 'HEAD'
 app.use('/api/admin', adminRoutes);         // Admin content management
 app.use('/api/awareness', awarenessRoutes); // Public content display
+
+app.use("/api/parent", parentRoutes);
 
 // 404 Handler (Adopted 'main's custom 404 handler, must be last route)
 app.use((req, res) => {

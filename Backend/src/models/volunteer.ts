@@ -2,20 +2,20 @@
 import { BaseModel } from "./BaseModels";
 
 export interface Volunteer {
-    volunteer_id: string; // same as user_id
+    volunteer_id: string; 
     phone: string | null;
-    availability: string | null; // JSON string
+    availability: string | null; 
     area: string | null;
     status: "pending" | "requested" | "approved" | "rejected";
 }
 
 export class VolunteerModel extends BaseModel {
-    // Initialize DB if needed
+   
     static initDB() {
         if (!this.db) this.init();
     }
 
-    // Get volunteer by volunteer_id (same as user_id)
+    
     static async getById(volunteerId: string): Promise<Volunteer | null> {
         this.initDB();
         const row = this.db
@@ -27,12 +27,12 @@ export class VolunteerModel extends BaseModel {
         return row ?? null;
     }
 
-    // Alias for getById (volunteer_id = user_id)
+    
     static async getByUserId(userId: string): Promise<Volunteer | null> {
         return this.getById(userId);
     }
 
-    // Create a new volunteer
+   
     static async create(volunteerId: string): Promise<Volunteer> {
         this.initDB();
         this.db
@@ -45,7 +45,7 @@ export class VolunteerModel extends BaseModel {
         return this.getById(volunteerId) as Promise<Volunteer>;
     }
 
-    // Update availability
+   
     static async updateAvailability(
         volunteerId: string,
         availability: { days: string[]; time: string }
@@ -65,7 +65,7 @@ export class VolunteerModel extends BaseModel {
         return this.getById(volunteerId);
     }
 
-    // Request approval: update phone, area, availability, and status
+ 
     static async requestApproval(
         volunteerId: string,
         data: {

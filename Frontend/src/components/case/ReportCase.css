@@ -6,6 +6,8 @@
     border-radius: 12px;
     box-shadow: 0 4px 12px rgba(0,0,0,0.1);
     font-family: 'Inter', sans-serif;
+    min-height: calc(100vh - 200px);     /* ← ADDED: forces scroll when needed */
+    overflow-y: auto;                    /* ← ADDED: enables scrolling inside form */
 }
 
 .report-case-form h2 {
@@ -21,7 +23,6 @@
     font-weight: 600;
 }
 
-/* Form Groups */
 .form-group {
     display: flex;
     flex-direction: column;
@@ -34,7 +35,6 @@
     color: #008080;
 }
 
-/* Inputs and Textareas */
 .form-group input,
 .form-group textarea {
     padding: 10px 15px;
@@ -56,12 +56,10 @@
     box-shadow: 0 0 5px rgba(255, 193, 7, 0.5);
 }
 
-/* Checkbox */
 .checkbox-group input[type="checkbox"] {
     margin-right: 8px;
 }
 
-/* Submit Button */
 button[type="submit"] {
     width: 100%;
     padding: 12px;

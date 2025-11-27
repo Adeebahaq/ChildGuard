@@ -11,9 +11,7 @@ type AuthResponseUser = Omit<AuthDbUser, 'password_hash'>;
 const JWT_SECRET = "your_jwt_secret";
 
 export class AuthController {
-    // -----------------------------------------
-    // REGISTER
-    // -----------------------------------------
+   
     static register(req: Request, res: Response) {
         try {
             const db = DatabaseConnection.getInstance();
@@ -24,26 +22,26 @@ export class AuthController {
                 return res.status(400).json({ error: "Invalid user role" });
             }
 
-            // Check if user already exists
+            
             const existing = db.prepare("SELECT * FROM users WHERE email = ? OR username = ?")
                                .get(email, username);
             if (existing) return res.status(400).json({ error: "User already exists" });
 
-            // Hash password
+            
             const hash = bcrypt.hashSync(password, 10);
 
-            // Generate user_id
+            
             const user_id = `USR-${Date.now()}-${Math.floor(Math.random() * 1000)}`;
 
-            // Transaction for safe insertion
+            
             const newUser = db.transaction(() => {
-                // 1️⃣ Insert into users first
+                
                 db.prepare(`
                     INSERT INTO users (user_id, username, email, password_hash, role)
                     VALUES (?, ?, ?, ?, ?)
                 `).run(user_id, username, email, hash, role);
 
-                // 2️⃣ Insert into role-specific table
+                
                 switch (role) {
                     case "parent":
                         db.prepare(`
@@ -61,7 +59,7 @@ export class AuthController {
                         break;
 
                     case "volunteer":
-                        // ✅ Use user_id directly as volunteer_id
+                        
                         db.prepare(`
                             INSERT INTO volunteers (volunteer_id, phone, area, status)
                             VALUES (?, ?, ?, ?)
@@ -77,13 +75,13 @@ export class AuthController {
                         break;
                 }
 
-                // 3️⃣ Return user info for JWT
+                
                 return db.prepare(`
                     SELECT user_id, username, email, role FROM users WHERE user_id = ?
                 `).get(user_id) as AuthResponseUser;
             })();
 
-            // Sign JWT
+            
             const token = jwt.sign({ user_id: newUser.user_id, role: newUser.role }, JWT_SECRET, { expiresIn: "1h" });
 
             res.status(201).json({
@@ -100,9 +98,7 @@ export class AuthController {
         }
     }
 
-    // -----------------------------------------
-    // LOGIN (unchanged)
-    // -----------------------------------------
+   
     static login(req: Request, res: Response) {
         try {
             const db = DatabaseConnection.getInstance();

@@ -16,9 +16,7 @@ const VolunteerDashboard = () => {
   const [volunteer, setVolunteer] = useState(null);
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState("");
-
-  // NEW Tabs
-  const [activeTab, setActiveTab] = useState("profile");
+  const [activeTab, setActiveTab] = useState("profile"); // default tab
 
   const API_URL = "http://localhost:5000/";
 
@@ -42,6 +40,11 @@ const VolunteerDashboard = () => {
       }
 
       setVolunteer(vol);
+
+      // Automatically set tab for pending volunteers
+      if (vol.status === "pending") {
+        setActiveTab("approval");
+      }
     } catch (err) {
       console.error(err);
       setMessage("Failed to load volunteer data.");
@@ -56,45 +59,89 @@ const VolunteerDashboard = () => {
 
   if (loading) return <p>Loading dashboard...</p>;
 
+  if (!volunteer) return <p>{message || "No volunteer data found."}</p>;
+
   return (
     <div className="volunteer-dashboard">
-            {/* TABS */}
+      {/* Show message if status is requested but not approved */}
+      {volunteer.status === "requested" && (
+        <p>Your request is pending approval.</p>
+      )}
+
+      {/* Tabs */}
       <div className="dashboard-tabs">
-        <button className={activeTab === "profile" ? "active" : ""} onClick={() => setActiveTab("profile")}>
-          Profile
-        </button>
+        {volunteer.status === "pending" && (
+          <button
+            className={activeTab === "approval" ? "active" : ""}
+            onClick={() => setActiveTab("approval")}
+          >
+            Request Approval
+          </button>
+        )}
 
-        <button className={activeTab === "availability" ? "active" : ""} onClick={() => setActiveTab("availability")}>
-          Availability
-        </button>
+        {volunteer.status === "approved" && (
+          <>
+            <button
+              className={activeTab === "profile" ? "active" : ""}
+              onClick={() => setActiveTab("profile")}
+            >
+              Profile
+            </button>
 
-        <button className={activeTab === "approval" ? "active" : ""} onClick={() => setActiveTab("approval")}>
-          Approval Request
-        </button>
+            <button
+              className={activeTab === "availability" ? "active" : ""}
+              onClick={() => setActiveTab("availability")}
+            >
+              Availability
+            </button>
 
-        <button className={activeTab === "visits" ? "active" : ""} onClick={() => setActiveTab("visits")}>
-          Assigned Visits
-        </button>
+            <button
+              className={activeTab === "visits" ? "active" : ""}
+              onClick={() => setActiveTab("visits")}
+            >
+              Assigned Visits
+            </button>
 
-        <button className={activeTab === "completed" ? "active" : ""} onClick={() => setActiveTab("completed")}>
-          Completed Visits
-        </button>
+            <button
+              className={activeTab === "completed" ? "active" : ""}
+              onClick={() => setActiveTab("completed")}
+            >
+              Completed Visits
+            </button>
+          </>
+        )}
       </div>
 
-      {/* TAB CONTENT */}
-      {activeTab === "profile" && <UserProfile userId={volunteerId} />}
-
-      {activeTab === "availability" && (
-        <VolunteerAvailability volunteer={volunteer} setVolunteer={setVolunteer} />
+      {/* Render tab content */}
+      {volunteer.status === "pending" && activeTab === "approval" && (
+        <VolunteerApprovalRequest
+          volunteer={volunteer}
+          setVolunteer={setVolunteer}
+          setMessage={setMessage}
+        />
       )}
 
-      {activeTab === "approval" && (
-        <VolunteerApprovalRequest volunteer={volunteer} setVolunteer={setVolunteer} setMessage={setMessage} />
+      {volunteer.status === "approved" && activeTab === "profile" && (
+        <UserProfile userId={volunteerId} />
       )}
 
-      {activeTab === "visits" && <VolunteerVisits volunteerId={volunteer?.volunteer_id} only="pending" />}
+      {volunteer.status === "approved" && activeTab === "availability" && (
+        <VolunteerAvailability
+          volunteer={volunteer}
+          setVolunteer={setVolunteer}
+        />
+      )}
 
-      {activeTab === "completed" && <VolunteerVisits volunteerId={volunteer?.volunteer_id} only="completed" />}
+      {volunteer.status === "approved" && activeTab === "visits" && (
+        <VolunteerVisits volunteerId={volunteer.volunteer_id} only="pending" />
+      )}
+
+      {volunteer.status === "approved" && activeTab === "completed" && (
+        <VolunteerVisits
+          volunteerId={volunteer.volunteer_id}
+          only="completed"
+        />
+      )}
     </div>
   );
 };

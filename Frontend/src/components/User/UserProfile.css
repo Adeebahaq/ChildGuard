@@ -22,7 +22,7 @@
     margin-bottom: 20px;
 }
 
-/* Row layout */
+
 .profile-row {
     display: flex;
     justify-content: space-between;
@@ -30,20 +30,20 @@
     border-bottom: 1px solid #eee;
 }
 
-/* Labels */
+
 .label {
     font-weight: 600;
     color: #444;
     font-size: 0.95rem;
 }
 
-/* Values */
+
 .value {
     color: #222;
     font-size: 0.95rem;
 }
 
-/* Status pill */
+
 .status-pill {
     background: #008080;
     color: #fff;
@@ -52,7 +52,7 @@
     font-weight: 600;
 }
 
-/* Smooth fade animation */
+
 @keyframes fadeIn {
     from { opacity: 0; transform: translateY(10px); }
     to   { opacity: 1; transform: translateY(0); }

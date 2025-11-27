@@ -3,7 +3,7 @@ import { BaseModel } from "./BaseModels";
 
 export interface VerificationVisit {
   visit_id: string;
-  volunteer_id: string; // same as user_id
+  volunteer_id: string; 
   target_id: string;
   target_type: "application" | "report";
   visit_date?: string;
@@ -15,7 +15,7 @@ export interface VerificationVisit {
 }
 
 export class VisitModel extends BaseModel {
-  // Get all visits assigned to a volunteer
+
   static async getAllByVolunteer(volunteer_id: string): Promise<VerificationVisit[]> {
     this.init();
     const rows = this.db
@@ -24,7 +24,7 @@ export class VisitModel extends BaseModel {
     return rows as VerificationVisit[];
   }
 
-  // Get single visit by ID
+ 
   static async getById(visit_id: string): Promise<VerificationVisit | null> {
     this.init();
     const row = this.db
@@ -33,7 +33,7 @@ export class VisitModel extends BaseModel {
     return row ?? null;
   }
 
-  // Accept a visit
+  
   static async acceptVisit(visit_id: string): Promise<VerificationVisit | null> {
     this.init();
     this.db
@@ -46,7 +46,7 @@ export class VisitModel extends BaseModel {
     return this.getById(visit_id);
   }
 
-  // Complete a visit and add findings
+  
   static async completeVisit(visit_id: string, findings?: string): Promise<VerificationVisit | null> {
     this.init();
     this.db
@@ -59,9 +59,9 @@ export class VisitModel extends BaseModel {
     return this.getById(visit_id);
   }
 
-  // Create a new visit
+  
   static async createVisit(data: {
-    volunteer_id: string; // same as user_id
+    volunteer_id: string; 
     target_id: string;
     target_type: "application" | "report";
     visit_date?: string;

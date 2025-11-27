@@ -58,7 +58,6 @@ const VolunteerApprovalRequest = ({ volunteer, setVolunteer, setMessage }) => {
     try {
       const token = localStorage.getItem("authToken");
 
-      // Use volunteer_id = user_id
       const res = await axios.post(
         `${API_URL}volunteer/${volunteer.volunteer_id}/request`,
         { phone, area, availability },
@@ -101,7 +100,7 @@ const VolunteerApprovalRequest = ({ volunteer, setVolunteer, setMessage }) => {
       </div>
 
       <h3>Select Availability</h3>
-      <div className="availability-grid" style={{ gridTemplateColumns: "1fr" }}>
+      <div className="availability-grid days-grid">
         {daysOfWeek.map((day) => (
           <div key={day} className="checkbox-item">
             <input
@@ -114,7 +113,7 @@ const VolunteerApprovalRequest = ({ volunteer, setVolunteer, setMessage }) => {
         ))}
       </div>
 
-      <div className="availability-grid" style={{ gridTemplateColumns: "1fr" }}>
+      <div className="availability-grid">
         {timeSlots.map((slot) => (
           <div key={slot} className="checkbox-item">
             <input

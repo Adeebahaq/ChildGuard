@@ -1,47 +1,115 @@
-/* Registration Form Container */
+/* src/components/RegisterPage.css */
+
+/* --- Form Layout --- */
 .form-group {
-    display: flex;
-    flex-direction: column;
-    margin-bottom: 20px;
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 20px;
+  width: 100%; /* Ensure group takes full width */
 }
 
 .form-group label {
-    margin-bottom: 8px;
-    font-weight: 600;
-    color: #008080; 
+  margin-bottom: 8px;
+  font-weight: 600;
+  color: #008080; /* teal */
 }
 
-
+/* --- Inputs & Selects --- */
 .form-group input,
 .form-group select {
-    padding: 10px 15px;
-    font-size: 1em;
-    border: 1px solid #ccc;
-    border-radius: 8px;
-    outline: none;
-    transition: all 0.3s ease;
+  width: 100%;
+  padding: 10px 15px;
+  font-size: 1em;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  outline: none;
+  transition: all 0.3s ease;
+  
+  /* IMPORTANT: Ensures padding doesn't make input wider than 100% */
+  box-sizing: border-box; 
 }
 
 .form-group input:focus,
 .form-group select:focus {
-    border-color: #ffc107; 
-    box-shadow: 0 0 5px rgba(255, 193, 7, 0.5);
+  border-color: #ffc107; /* golden */
+  box-shadow: 0 0 5px rgba(255, 193, 7, 0.5);
 }
 
-
+/* --- Submit Button --- */
 button[type="submit"] {
-    width: 100%;
-    padding: 12px;
-    background-color: #ffc107; 
-    color: #333;
-    font-weight: 700;
-    border: none;
-    border-radius: 25px;
-    cursor: pointer;
-    transition: all 0.3s ease;
+  width: 100%;
+  padding: 12px;
+  background-color: #008080;   /* teal */
+  color: #FFD700;              /* golden text */
+  font-weight: 700;
+  border: none;
+  border-radius: 25px;
+  cursor: pointer;
+  transition: all 0.3s ease;
 }
 
 button[type="submit"]:hover {
-    background-color: #ff9800;
-    color: #fff;
+  background-color: #004d4d;  /* darker teal */
+  color: #FFD700;
+}
+
+button[type="submit"]:disabled {
+  background-color: #ccc;
+  cursor: not-allowed;
+  color: #666;
+}
+
+/* --- Password Wrapper (For Custom Eye Icon) --- */
+.password-wrapper {
+  position: relative;
+  width: 100%;
+}
+
+.password-wrapper input {
+  width: 100%;
+  padding-right: 40px; /* Extra space on right so text doesn't hit the icon */
+  box-sizing: border-box;
+}
+
+.password-toggle {
+  position: absolute;
+  top: 50%;
+  right: 15px;
+  transform: translateY(-50%); /* Centers icon vertically perfectly */
+  cursor: pointer;
+  font-size: 1.2rem;
+  color: #555;
+  display: flex; /* Ensures SVG centers correctly */
+}
+
+.password-toggle:hover {
+  color: #008080; /* Optional: Make eye teal on hover */
+}
+
+/* --- ERROR & SUCCESS MESSAGES --- */
+.error-message {
+  color: #d9534f;
+  background-color: #f2dede;
+  padding: 10px;
+  border-radius: 5px;
+  margin-bottom: 15px;
+  text-align: center;
+  border: 1px solid #ebccd1;
+}
+
+.success-message {
+  color: #3c763d;
+  background-color: #dff0d8;
+  padding: 10px;
+  border-radius: 5px;
+  margin-bottom: 15px;
+  text-align: center;
+  border: 1px solid #d6e9c6;
+}
+
+/* --- BROWSER OVERRIDES (The Fix) --- */
+/* This hides the default 'eye' icon in Edge/IE so you don't see double icons */
+input::-ms-reveal,
+input::-ms-clear {
+  display: none;
 }

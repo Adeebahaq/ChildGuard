@@ -1,4 +1,3 @@
-// src/models/volunteer.ts
 import { BaseModel } from "./BaseModels";
 
 export interface Volunteer {
@@ -6,6 +5,7 @@ export interface Volunteer {
     phone: string | null;
     availability: string | null; 
     area: string | null;
+    age: number | null;                   // <-- added age
     status: "pending" | "requested" | "approved" | "rejected";
 }
 
@@ -20,7 +20,7 @@ export class VolunteerModel extends BaseModel {
         this.initDB();
         const row = this.db
             .prepare(
-                "SELECT volunteer_id, phone, availability, area, status FROM volunteers WHERE volunteer_id = ?"
+                "SELECT volunteer_id, phone, availability, area, age, status FROM volunteers WHERE volunteer_id = ?"
             )
             .get(volunteerId) as Volunteer | undefined;
 
@@ -37,8 +37,8 @@ export class VolunteerModel extends BaseModel {
         this.initDB();
         this.db
             .prepare(
-                `INSERT INTO volunteers (volunteer_id, phone, availability, area, status)
-                 VALUES (?, NULL, NULL, NULL, 'pending')`
+                `INSERT INTO volunteers (volunteer_id, phone, availability, area, age, status)
+                 VALUES (?, NULL, NULL, NULL, 18, 'pending')`    // <-- default age 18
             )
             .run(volunteerId);
 
@@ -71,6 +71,7 @@ export class VolunteerModel extends BaseModel {
         data: {
             phone: string;
             area: string;
+            age: number;                         // <-- added age
             availability: { days: string[]; time: string };
         }
     ): Promise<Volunteer | null> {
@@ -82,6 +83,7 @@ export class VolunteerModel extends BaseModel {
                 SET 
                     phone = ?, 
                     area = ?, 
+                    age = ?,                          -- <-- update age
                     availability = ?, 
                     status = 'requested'
                 WHERE volunteer_id = ?
@@ -89,6 +91,7 @@ export class VolunteerModel extends BaseModel {
             .run(
                 data.phone,
                 data.area,
+                data.age,
                 JSON.stringify(data.availability),
                 volunteerId
             );

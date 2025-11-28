@@ -1,18 +1,20 @@
 import React, { useState } from "react";
 import axios from "axios";
+import "./ReportCase.css";
 
-const ReportCase = ({ userId = null }) => {
+function ReportCase({ onClose }) {
   const [formData, setFormData] = useState({
+    child_name: "",
+    child_gender: "",
+    child_age: "",
     location: "",
     description: "",
-    child_name: "",
-    child_age: "",
-    phone: "",
-    photo_url: "",
     is_anonymous: false,
   });
 
-  const [status, setStatus] = useState("");
+  const [photo, setPhoto] = useState(null);
+  const [loading, setLoading] = useState(false);
+  const [message, setMessage] = useState("");
 
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
@@ -22,87 +24,127 @@ const ReportCase = ({ userId = null }) => {
     }));
   };
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-
-    try {
-      const payload = {
-        ...formData,
-        user_id: userId,
-        child_age: formData.child_age ? parseInt(formData.child_age, 10) : null,
-        is_anonymous: formData.is_anonymous ? 1 : 0,
-      };
-
-      const res = await axios.post("http://localhost:5000/case/report", payload);
-      if (res.data.success) {
-        setStatus("Report submitted successfully!");
-
-        setFormData({
-          location: "",
-          description: "",
-          child_name: "",
-          child_age: "",
-          phone: "",
-          photo_url: "",
-          is_anonymous: false,
-        });
-      }
-    } catch (err) {
-      console.error(err);
-      setStatus("Error submitting report.");
+  const handleFile = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      setPhoto(file);
+      // Removed photoPreview code
     }
   };
 
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setLoading(true);
+    setMessage("");
+
+    try {
+      const sendData = new FormData();
+      Object.entries(formData).forEach(([key, value]) =>
+        sendData.append(key, key === "is_anonymous" ? (value ? 1 : 0) : value)
+      );
+
+      if (photo) sendData.append("photo", photo);
+
+      await axios.post("http://localhost:5000/case/report", sendData, {
+        headers: { "Content-Type": "multipart/form-data" },
+      });
+
+      setMessage("Report submitted successfully!");
+      setFormData({
+        child_name: "",
+        child_gender: "",
+        child_age: "",
+        location: "",
+        description: "",
+        is_anonymous: false,
+      });
+      setPhoto(null);
+    } catch (error) {
+      console.error(error);
+      setMessage("Error submitting report.");
+    }
+
+    setLoading(false);
+  };
+
   return (
-    <div className="report-case-form">
-      <h2>Report a Case</h2>
-      {status && <p className="status-message">{status}</p>}
+    <div >
+      {onClose && (
+        <button className="close-btn" onClick={onClose}>
+          ×
+        </button>
+      )}
 
-      {/* Scrollable content inside modal */}
-      <div className="modal-scrollable-content">
-        <form onSubmit={handleSubmit}>
-          <div className="form-group">
-            <label>Your Phone (optional):</label>
-            <input type="text" name="phone" value={formData.phone} onChange={handleChange} />
-          </div>
+      <h2 style={{ textAlign: "center", marginBottom: "20px" }}>Report a Case</h2>
+      {message && <p className="message">{message}</p>}
 
-          <div className="form-group checkbox-group">
-            <label>
-              <input type="checkbox" name="is_anonymous" checked={formData.is_anonymous} onChange={handleChange} />
-              Anonymous
-            </label>
-          </div>
+      <form onSubmit={handleSubmit}>
+        <label>Child Name</label>
+        <input
+          name="child_name"
+          value={formData.child_name}
+          onChange={handleChange}
+          required
+        />
 
-          <div className="form-group">
-            <label>Location:</label>
-            <input type="text" name="location" value={formData.location} onChange={handleChange} required />
-          </div>
+        <label>Gender</label>
+        <select
+          name="child_gender"
+          value={formData.child_gender}
+          onChange={handleChange}
+          required
+        >
+          <option value="">Select</option>
+          <option value="male">Male</option>
+          <option value="female">Female</option>
+        </select>
 
-          <div className="form-group">
-            <label>Description:</label>
-            <textarea name="description" value={formData.description} onChange={handleChange} required />
-          </div>
+        <label>Age</label>
+        <input
+          name="child_age"
+          type="number"
+          value={formData.child_age}
+          onChange={handleChange}
+          required
+        />
 
-          <div className="form-group">
-            <label>Child Name:</label>
-            <input type="text" name="child_name" value={formData.child_name} onChange={handleChange} />
-          </div>
+        <label>Location</label>
+        <input
+          name="location"
+          value={formData.location}
+          onChange={handleChange}
+          required
+        />
 
-          <div className="form-group">
-            <label>Child Age:</label>
-            <input type="number" name="child_age" value={formData.child_age} onChange={handleChange} />
-          </div>
+        <label>Description</label>
+        <textarea
+          name="description"
+          value={formData.description}
+          onChange={handleChange}
+          required
+        />
 
-          <div className="form-group">
-            <label>Photo URL:</label>
-            <input type="text" name="photo_url" value={formData.photo_url} onChange={handleChange} />
-          </div>
+        <label>
+          <input
+            type="checkbox"
+            name="is_anonymous"
+            checked={formData.is_anonymous}
+            onChange={handleChange}
+          />
+          Report Anonymously
+        </label>
 
-          <button type="submit" className="cta-btn">Submit Report</button>
-        </form>
-      </div>
+        <label className="upload-label">
+          Upload Photo
+          <input type="file" accept="image/*" onChange={handleFile} />
+        </label>
+
+        <button type="submit" disabled={loading}>
+          {loading ? "Submitting..." : "Submit Report"}
+        </button>
+      </form>
     </div>
   );
-};
+}
 
 export default ReportCase;

@@ -1,0 +1,98 @@
+/* src/components/Navbar.css */
+
+/* --- 1. Navbar Container --- */
+.navbar {
+  position: fixed;       /* Keeps it pinned to the top */
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 80px;          /* Fixed height */
+  
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0 2rem;
+  
+  background-color: #FFD700; /* golden */
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  z-index: 1000;         /* Ensures it sits on top of everything */
+  box-sizing: border-box; /* Ensures padding doesn't increase height */
+}
+
+/* --- 2. The Spacer --- */
+/* This invisible block sits in the document flow to push content down */
+.navbar-spacer {
+  height: 80px;  /* MUST match .navbar height exactly */
+  width: 100%;
+  display: block;
+}
+
+/* --- 3. Logo --- */
+.navbar-logo {
+  font-size: 1.5rem;
+  font-weight: bold;
+  color: #008080; /* teal */
+  cursor: pointer;
+}
+
+/* --- 4. Links Container --- */
+.navbar-links {
+  display: flex;
+  gap: 1rem;
+}
+
+/* --- 5. Buttons --- */
+.nav-btn {
+  background: none;
+  border: none;
+  font-size: 1rem;
+  cursor: pointer;
+  color: #008080;
+  padding: 0.5rem 1rem;
+  transition: 0.3s;
+}
+
+.nav-btn:hover {
+  color: #004d4d;
+  font-weight: 500;
+}
+
+/* Register Button */
+.navbar .register-btn {
+  background-color: #008080; /* teal */
+  color: #FFD700; /* golden */
+  border: 2px solid #008080;
+  border-radius: 4px;
+  padding: 0.5rem 1rem;
+  font-weight: bold;
+  cursor: pointer;
+  transition: 0.3s;
+}
+
+.navbar .register-btn:hover {
+  background-color: #004d4d; 
+  color: #FFD700;
+}
+
+/* Logout Button */
+.navbar .logout-btn {
+  background-color: transparent;
+  border: 2px solid #008080;
+  color: #008080;
+  border-radius: 4px;
+  padding: 0.5rem 1rem;
+  font-weight: bold;
+  cursor: pointer;
+  transition: 0.3s;
+}
+
+.navbar .logout-btn:hover {
+  background-color: #008080;
+  color: #FFD700;
+}
+
+/* --- 6. Reset Body Padding --- */
+/* Since we use the spacer div, we REMOVE the body padding to avoid a double gap */
+body, .main-content {
+  padding-top: 0 !important;
+}

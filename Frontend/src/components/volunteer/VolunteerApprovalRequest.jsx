@@ -1,4 +1,3 @@
-// src/components/volunteer/VolunteerApprovalRequest.jsx
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import "./VolunteerApprovalRequest.css";
@@ -6,15 +5,10 @@ import "./VolunteerApprovalRequest.css";
 const VolunteerApprovalRequest = ({ volunteer, setVolunteer, setMessage }) => {
   const API_URL = "http://localhost:5000/";
 
-  // Normalize availability to always have days array and time string
   const normalizeAvailability = (av) => {
     if (!av) return { days: [], time: "" };
     if (typeof av === "string") {
-      try {
-        av = JSON.parse(av);
-      } catch {
-        return { days: [], time: "" };
-      }
+      try { av = JSON.parse(av); } catch { return { days: [], time: "" }; }
     }
     return {
       days: Array.isArray(av.days) ? av.days : [],
@@ -24,33 +18,31 @@ const VolunteerApprovalRequest = ({ volunteer, setVolunteer, setMessage }) => {
 
   const [phone, setPhone] = useState(volunteer?.phone || "");
   const [area, setArea] = useState(volunteer?.area || "");
+  const [age, setAge] = useState(volunteer?.age || 18);   // <-- added age state
   const [availability, setAvailability] = useState(normalizeAvailability(volunteer?.availability));
   const [loading, setLoading] = useState(false);
 
-  // Sync local state when volunteer prop updates
   useEffect(() => {
     setPhone(volunteer?.phone || "");
     setArea(volunteer?.area || "");
+    setAge(volunteer?.age || 18);                           // <-- sync age
     setAvailability(normalizeAvailability(volunteer?.availability));
   }, [volunteer]);
 
   const daysOfWeek = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"];
   const timeSlots = ["Morning (9AM - 12PM)", "Afternoon (12PM - 3PM)", "Evening (3PM - 6PM)"];
 
-  // Toggle selected days
   const toggleDay = (day, checked) => {
     const currentDays = Array.isArray(availability.days) ? availability.days : [];
     const newDays = checked ? [...currentDays, day] : currentDays.filter((d) => d !== day);
     setAvailability({ ...availability, days: newDays });
   };
 
-  // Select a time slot
   const selectTime = (slot) => setAvailability({ ...availability, time: slot });
 
-  // Send approval request
   const handleRequestApproval = async () => {
-    if (!phone || !area || !availability.days.length || !availability.time) {
-      alert("Please fill phone, area, and select availability.");
+    if (!phone || !area || !availability.days.length || !availability.time || !age) {
+      alert("Please fill phone, area, age, and select availability.");
       return;
     }
 
@@ -60,7 +52,7 @@ const VolunteerApprovalRequest = ({ volunteer, setVolunteer, setMessage }) => {
 
       const res = await axios.post(
         `${API_URL}volunteer/${volunteer.volunteer_id}/request`,
-        { phone, area, availability },
+        { phone, area, age, availability },   // <-- send age
         { headers: { Authorization: `Bearer ${token}` } }
       );
 
@@ -96,6 +88,17 @@ const VolunteerApprovalRequest = ({ volunteer, setVolunteer, setMessage }) => {
           value={area}
           onChange={(e) => setArea(e.target.value)}
           placeholder="Enter your area"
+        />
+      </div>
+
+      <div className="input-group">
+        <label>Age:</label>
+        <input
+          type="number"
+          value={age}
+          onChange={(e) => setAge(Number(e.target.value))}
+          min={18}                       // <-- enforce minimum age
+          placeholder="Enter your age"
         />
       </div>
 

@@ -8,15 +8,15 @@ body {
     margin: 0;
     padding: 0;
     width: 100%;
-    overflow-x: hidden; /* Prevent horizontal scrollbar */
+    overflow-x: hidden; 
 }
 
 .home-page-container {
     position: relative;
-    width: 100%; /* Full width page */
+    width: 80%; /* Full width page */
     background-color: white;
     box-shadow: none;
-    min-height: 100vh;
+    min-height: 10vh;
 }
 
 /* --- TOP-RIGHT NAVIGATION BUTTONS --- */
@@ -52,12 +52,11 @@ body {
 }
 
 .register-btn {
-    background-color: #ffc107; 
-    color: #333;
-    border: 1px solid #ffb300;
+    background-color: #008080; /* teal */
+    color: #FFD700
 }
 .register-btn:hover {
-    background-color: #ff9800;
+    background-color: #ff0000;
     color: white;
 }
 
@@ -139,18 +138,16 @@ body {
 .hero-section {
     display: flex;
     align-items: center;
-    padding: 160px 5% 80px 5%; 
+    padding: 40px 5%;        /* reduce top/bottom padding */
     background: #008080; 
     color: white;
     gap: 40px;
     overflow: hidden;
     position: relative;
+    min-height: 200px;       /* optional: set a smaller min height */
 }
 
-.hero-content {
-    flex: 1;
-    max-width: 50%;
-}
+
 
 .hero-title {
     font-size: 3.8em;

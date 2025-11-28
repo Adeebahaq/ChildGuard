@@ -1,0 +1,120 @@
+body {
+    margin: 0;
+    font-family: Arial, sans-serif;
+}
+
+/* Hero Section */
+.hero {
+    background: linear-gradient(#008080b0, #008080b0),
+      url("https://images.unsplash.com/photo-1509099836639-18ba1795216d");
+    background-size: cover;
+    background-position: center;
+    padding: 100px 20px;
+    text-align: center;
+    color: white;
+}
+
+.hero-content h1 {
+    font-size: 48px;
+    margin-bottom: 10px;
+    color: #D4AF37;
+}
+
+.hero-content p {
+    font-size: 20px;
+}
+
+/* Sections */
+.section {
+    display: flex;
+    align-items: center;
+    padding: 60px 10%;
+    gap: 40px;
+}
+
+.section img {
+    width: 45%;
+    border-radius: 12px;
+    box-shadow: 0px 4px 12px rgba(0,0,0,0.2);
+}
+
+.section .content {
+    width: 55%;
+}
+
+.section h2 {
+    color: #008080;
+    font-size: 32px;
+    margin-bottom: 15px;
+}
+
+.section p {
+    font-size: 18px;
+    line-height: 1.6;
+}
+
+.mission {
+    background-color: #ffffff;
+}
+
+.vision {
+    background-color: #eefbf9;
+}
+
+/* Services */
+.services {
+    padding: 60px 10%;
+    text-align: center;
+    background-color: #ffffff;
+}
+
+.services h2 {
+    font-size: 36px;
+    color: #008080;
+}
+
+.cards {
+    margin-top: 40px;
+    display: flex;
+    gap: 30px;
+    flex-wrap: wrap;
+    justify-content: center;
+}
+
+.card {
+    background: white;
+    width: 300px;
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0px 4px 12px rgba(0,0,0,0.2);
+    transition: 0.3s;
+}
+
+.card:hover {
+    transform: translateY(-8px);
+}
+
+.card img {
+    width: 100%;
+    height: 180px;
+    object-fit: cover;
+}
+
+.card h3 {
+    margin: 12px 0;
+    color: #D4AF37;
+}
+
+.card p {
+    padding: 0 15px 20px;
+    font-size: 16px;
+}
+
+/* Footer */
+.footer {
+    text-align: center;
+    padding: 20px;
+    background: #008080;
+    color: white;
+    margin-top: 40px;
+}

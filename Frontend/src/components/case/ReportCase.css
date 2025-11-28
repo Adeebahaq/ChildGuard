@@ -1,78 +1,117 @@
-.report-case-form {
-    max-width: 500px;
-    margin: 20px auto;
-    padding: 30px;
-    background-color: #f3f7f9;
-    border-radius: 12px;
-    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-    font-family: 'Inter', sans-serif;
-    min-height: calc(100vh - 200px);     /* ← ADDED: forces scroll when needed */
-    overflow-y: auto;                    /* ← ADDED: enables scrolling inside form */
+/* Container for the report form */
+.report-case-container {
+  position: relative;
+  max-width: 700px; /* Wider form */
+  width: 90%;
+  max-height: 85vh; /* Scrollable if content exceeds */
+  overflow-y: auto;
+  margin: 40px auto;
+  padding: 30px 25px;
+  background: #ffffff;
+  border-radius: 12px;
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 }
 
-.report-case-form h2 {
-    text-align: ceginter;
-    margin-bottom: 20px;
-    color: #008080;
+/* Scrollbar customization */
+.report-case-container::-webkit-scrollbar {
+  width: 8px;
 }
 
-.status-message {
-    text-align: center;
-    margin-bottom: 15px;
-    color: green;
-    font-weight: 600;
+.report-case-container::-webkit-scrollbar-thumb {
+  background-color: #a0c4ff;
+  border-radius: 4px;
 }
 
-.form-group {
-    display: flex;
-    flex-direction: column;
-    margin-bottom: 15px;
+/* Form elements */
+form label {
+  display: block;
+  margin-bottom: 5px;
+  font-weight: 600;
+  color: #333;
 }
 
-.form-group label {
-    margin-bottom: 5px;
-    font-weight: 600;
-    color: #008080;
+form input,
+form select,
+form textarea {
+  width: 100%;
+  padding: 10px 12px;
+  margin-bottom: 15px;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  box-sizing: border-box;
+  font-size: 15px;
+  transition: border 0.3s, box-shadow 0.3s;
 }
 
-.form-group input,
-.form-group textarea {
-    padding: 10px 15px;
-    font-size: 1em;
-    border: 1px solid #ccc;
-    border-radius: 8px;
-    outline: none;
-    transition: all 0.3s ease;
+form input:focus,
+form select:focus,
+form textarea:focus {
+  border-color: #4a90e2;
+  box-shadow: 0 0 8px rgba(74, 144, 226, 0.3);
+  outline: none;
 }
 
-.form-group textarea {
-    resize: vertical;
-    min-height: 80px;
+/* Checkbox */
+form input[type="checkbox"] {
+  width: auto;
+  margin-right: 8px;
 }
 
-.form-group input:focus,
-.form-group textarea:focus {
-    border-color: #ffc107;
-    box-shadow: 0 0 5px rgba(255, 193, 7, 0.5);
+/* Photo preview */
+.photo-preview {
+  margin-bottom: 15px;
+  text-align: center;
 }
 
-.checkbox-group input[type="checkbox"] {
-    margin-right: 8px;
+.photo-preview img {
+  max-width: 100%;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
 }
 
-button[type="submit"] {
-    width: 100%;
-    padding: 12px;
-    background-color: #ffc107;
-    color: #333;
-    font-weight: 700;
-    border: none;
-    border-radius: 25px;
-    cursor: pointer;
-    transition: all 0.3s ease;
+/* Submit button */
+form button {
+  width: 100%;
+  padding: 12px;
+  background-color: #4a90e2;
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  font-size: 16px;
+  cursor: pointer;
+  transition: background-color 0.3s, transform 0.2s;
 }
 
-button[type="submit"]:hover {
-    background-color: #ff9800;
-    color: #fff;
+form button:hover {
+  background-color: #357ab8;
+  transform: translateY(-2px);
+}
+
+/* Close button */
+.close-btn {
+  position: absolute;
+  top: 15px;
+  right: 15px;
+  background: #ff6b6b;
+  color: #fff;
+  border: none;
+  border-radius: 50%;
+  width: 32px;
+  height: 32px;
+  font-size: 20px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.close-btn:hover {
+  background-color: #e55a5a;
+}
+
+/* Message */
+.message {
+  margin-bottom: 15px;
+  font-weight: 600;
+  color: green;
+  text-align: center;
 }

@@ -3,6 +3,7 @@
     "@types/express": "^5.0.5",
     "axios": "^1.13.2",
     "express": "^5.1.0",
+    "lucide-react": "^0.555.0",
     "react-router-dom": "^7.9.6"
   }
 }

@@ -1,0 +1,59 @@
+.profile-card {
+    width: 420px;
+    margin: 20px auto;
+    padding: 25px;
+    background: #ffffff;
+    border-radius: 18px;
+    box-shadow: 0px 6px 25px rgba(0, 0, 0, 0.1);
+    transition: 0.25s ease;
+    animation: fadeIn 0.4s ease;
+}
+
+.profile-card:hover {
+    box-shadow: 0px 8px 30px rgba(0, 0, 0, 0.15);
+}
+
+/* Title */
+.profile-title {
+    text-align: center;
+    font-size: 1.7rem;
+    font-weight: 700;
+    color: #008080;
+    margin-bottom: 20px;
+}
+
+
+.profile-row {
+    display: flex;
+    justify-content: space-between;
+    padding: 10px 0;
+    border-bottom: 1px solid #eee;
+}
+
+
+.label {
+    font-weight: 600;
+    color: #444;
+    font-size: 0.95rem;
+}
+
+
+.value {
+    color: #222;
+    font-size: 0.95rem;
+}
+
+
+.status-pill {
+    background: #008080;
+    color: #fff;
+    padding: 5px 12px;
+    border-radius: 12px;
+    font-weight: 600;
+}
+
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to   { opacity: 1; transform: translateY(0); }
+}

@@ -1,13 +1,15 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
-import './LoginPage.css';  // Use the same CSS as RegisterPage for consistency
+import './LoginPage.css';
 
-function LoginPage() {
+function LoginPage({ onForgotPassword }) {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
+  const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -17,26 +19,35 @@ function LoginPage() {
 
     try {
       const API_URL = 'http://localhost:5000/api/auth/login';
+      const response = await axios.post(API_URL, { email, password });
 
-      const response = await axios.post(API_URL, {
-        email,
-        password,
-      });
+      const { token, user } = response.data; 
+      const role = user.role;
+      const userId = user.user_id; 
 
-      const token = response.data.token;
       localStorage.setItem('authToken', token);
 
-      console.log('Login Successful, Token:', token);
       setSuccess('Login successful! Redirecting...');
       setEmail('');
       setPassword('');
 
-      // TODO: redirect using react-router
-      // navigate('/dashboard');
-
+      if (role === 'volunteer') {
+        if (!userId) {
+          setError('User ID (volunteer ID) missing from backend response.');
+          setLoading(false);
+          return;
+        }
+        navigate(`/volunteer/${userId}/dashboard`); 
+      } 
+    
+      else if (role === 'admin') {
+        navigate('/admin');  
+      } 
+      else {
+        navigate('/'); 
+      }
     } catch (err) {
       console.error('Login Error:', err);
-
       if (err.response) {
         setError(err.response.data.message || 'Invalid email or password.');
       } else if (err.request) {
@@ -50,11 +61,10 @@ function LoginPage() {
   };
 
   return (
-    <div className="register-container">
+    <div className="login-container">
       <h1>Login</h1>
 
-      <form onSubmit={handleSubmit}>
-
+      <form className="login-form" onSubmit={handleSubmit}>
         {error && <p className="error-message">{error}</p>}
         {success && <p className="success-message">{success}</p>}
 
@@ -80,9 +90,22 @@ function LoginPage() {
           />
         </div>
 
-        <button type="submit" disabled={loading}>
+        <button type="submit" className="submit-btn" disabled={loading}>
           {loading ? 'Logging In...' : 'Log In'}
         </button>
+
+        <p className="forgot-password">
+          <a
+            href="#"
+            className="link-btn"
+            onClick={(e) => {
+              e.preventDefault();
+              if (onForgotPassword) onForgotPassword();
+            }}
+          >
+            Forgot Password?
+          </a>
+        </p>
       </form>
     </div>
   );

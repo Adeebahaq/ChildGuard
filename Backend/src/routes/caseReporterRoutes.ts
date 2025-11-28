@@ -3,8 +3,6 @@ import { Router } from "express";
 import { CaseReporterModel } from "../models/caseReporter";
 
 const router = Router();
-
-// POST /report
 router.post("/report", (req, res) => {
   try {
     const report = CaseReporterModel.reportCase(req.body);

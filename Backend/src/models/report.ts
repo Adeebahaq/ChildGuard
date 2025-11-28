@@ -14,7 +14,7 @@ export interface Report {
 }
 
 export class ReportModel extends BaseModel {
-  // Submit a new report
+  
   static submit(data: {
     reporter_id?: string;
     location: string;

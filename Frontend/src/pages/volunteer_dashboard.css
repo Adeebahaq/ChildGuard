@@ -1,0 +1,33 @@
+/* Top tabs container */
+.dashboard-tabs {
+    display: flex;
+    gap: 10px;
+    background-color: #008080; 
+    padding: 10px 20px;
+    border-radius: 8px;
+    margin-bottom: 20px;
+}
+
+
+.dashboard-tabs button {
+    flex: 1;
+    padding: 12px 20px; 
+    background-color: #008080; 
+    color: white;
+    font-weight: 600;
+    font-size: 1.2em; 
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+
+.dashboard-tabs button.active {
+    background-color: #ffc107; 
+    color: #008080; 
+}
+
+.dashboard-tabs button:not(.active):hover {
+    background-color: #006666; 
+}

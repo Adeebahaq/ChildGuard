@@ -1,3 +1,38 @@
+/* ——————— MODAL INTERNAL SCROLL FIX (background stays fixed) ——————— */
+.modal-scrollable-content {
+    max-height: 82vh;                    /* Adjust if you want more/less height */
+    overflow-y: auto;                    /* This makes ONLY the form scroll */
+    overflow-x: hidden;
+    padding-right: 12px;                 /* Space for scrollbar */
+    margin-right: -12px;                 /* Hide gap */
+    scrollbar-width: thin;
+    scrollbar-color: #c0c0c0 #f1f1f1;
+}
+
+/* Beautiful custom scrollbar (optional but looks professional) */
+.modal-scrollable-content::-webkit-scrollbar {
+    width: 8px;
+}
+.modal-scrollable-content::-webkit-scrollbar-track {
+    background: #f1f1f1;
+    border-radius: 10px;
+}
+.modal-scrollable-content::-webkit-scrollbar-thumb {
+    background: #aaa;
+    border-radius: 10px;
+}
+.modal-scrollable-content::-webkit-scrollbar-thumb:hover {
+    background: #999;
+}
+
+/* ------------------- FINAL SCROLL FIX — ADD THIS AT THE TOP ------------------- */
+html, body, #root, .home-page-container {
+    height: auto !important;
+    min-height: 100vh !important;
+    overflow-y: auto !important;
+    overflow-x: hidden !important;
+}
+
 /* ------------------- GLOBAL & BODY ------------------- */
 html, body {
     width: 100%;
@@ -9,6 +44,51 @@ html, body {
     overflow-x: hidden;
 }
 
+/* --- HERO SECTION --- */
+.hero-section {
+    display: flex;
+    align-items: center;
+    padding: 80px 5%;
+    background: #008080;
+    color: white;
+    gap: 40px;
+    overflow: visible !important;
+    min-height: 100vh;
+    height: auto !important;
+    position: relative;
+    z-index: 1;
+}
+/* ------------------- GLOBAL & BODY ------------------- */
+html, body {
+    width: 100%;
+    height: 100%;
+    margin: 0;
+    padding: 0;
+    font-family: 'Inter', sans-serif;
+    background-color: #e9eff6;
+    overflow-x: hidden;
+    overflow-y: auto !important;     /* ← ADDED: forces scroll */
+}
+
+#root {
+    min-height: 100vh;
+    overflow-y: auto !important;      /* ← ADDED: critical fix */
+}
+
+/* ← NEW: FIX HERO SECTION BLOCKING SCROLL */
+.hero-section {
+    display: flex;
+    align-items: center;
+    padding: 80px 5%;
+    background: #008080;
+    color: white;
+    gap: 40px;
+    overflow: visible !important;     /* ← CHANGED: was hidden → now visible */
+    min-height: 100vh;
+    height: auto !important;          /* ← ADDED: allows page to grow */
+}
+
+/* Rest of your original App.css — 100% unchanged below */
 .home-page-container {
     width: 100%;
     min-height: 100vh;
@@ -115,15 +195,6 @@ html, body {
 }
 
 /* --- HERO SECTION --- */
-.hero-section {
-    display: flex;
-    align-items: center;
-    padding: 80px 5%;
-    background: #008080;
-    color: white;
-    gap: 40px;
-    overflow: hidden;
-}
 .hero-content { flex: 1; max-width: 50%; }
 .hero-title { font-size: 3.8em; font-weight: 900; margin-bottom: 20px; text-shadow: 0 2px 4px rgba(0,0,0,0.2);}
 .hero-subtitle { font-size: 1.3em; margin-bottom: 40px; font-weight: 300; }

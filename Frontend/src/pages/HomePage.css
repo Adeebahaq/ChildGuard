@@ -47,12 +47,12 @@ body {
 
 .top-tab {
     background-color: #f7f7f7;
-    color: #008080; /* Teal text */
+    color: #008080; 
     border: 1px solid #ddd;
 }
 
 .register-btn {
-    background-color: #ffc107; /* Gold/Yellow */
+    background-color: #ffc107; 
     color: #333;
     border: 1px solid #ffb300;
 }
@@ -61,7 +61,7 @@ body {
     color: white;
 }
 
-/* --- MODAL OVERLAY & PANEL --- */
+
 .auth-modal-overlay {
     position: fixed;
     top: 0; left: 0;
@@ -79,13 +79,13 @@ body {
     background: white;
     padding: 40px 30px 30px 30px;
     border-radius: 12px;
-    position: relative; /* important for absolute positioning */
+    position: relative; 
     box-shadow: 0 15px 40px rgba(0,0,0,0.4);
     animation: fadeInScale 0.3s ease-out;
 }
 
 .close-btn {
-    position: absolute; /* top-right of modal */
+    position: absolute; 
     top: 15px;
     right: 15px;
     font-size: 28px;
@@ -100,11 +100,11 @@ body {
     color: #ff9800;
 }
 
-/* Separate container for form content so it can be centered */
+
 .modal-content-area {
     display: flex;
     flex-direction: column;
-    align-items: center; /* centers the form */
+    align-items: center; 
     justify-content: center;
     gap: 20px;
 }
@@ -122,8 +122,8 @@ body {
 }
 
 .modal-tab-btn.active {
-    color: #008080; /* Teal */
-    border-bottom-color: #ffc107; /* Gold */
+    color: #008080; 
+    border-bottom-color: #ffc107; 
 }
 
 .about-us-content h2 {
@@ -135,12 +135,12 @@ body {
     line-height: 1.6;
 }
 
-/* --- HERO SECTION --- */
+
 .hero-section {
     display: flex;
     align-items: center;
-    padding: 160px 5% 80px 5%; /* Added top padding for distance from top */
-    background: #008080; /* Teal Background */
+    padding: 160px 5% 80px 5%; 
+    background: #008080; 
     color: white;
     gap: 40px;
     overflow: hidden;
@@ -202,7 +202,7 @@ body {
     color: #008080;
 }
 
-/* HERO IMAGE */
+
 .hero-image {
     flex: 1;
     text-align: right;
@@ -217,7 +217,7 @@ body {
     object-fit: cover;
 }
 
-/* --- OBJECTIVES SECTION --- */
+
 .impact-section {
     padding: 60px 5%;
     text-align: center;
@@ -281,7 +281,7 @@ body {
     font-size: 0.95em;
 }
 
-/* --- FOOTER --- */
+
 .footer {
     text-align: center;
     padding: 25px 5%;
@@ -290,9 +290,7 @@ body {
     font-size: 0.9em;
 }
 
-/* -------------------------------------------------------------------
- * RESPONSIVENESS
- * ------------------------------------------------------------------- */
+
 @media (max-width: 800px) {
     .hero-section {
         flex-direction: column;
@@ -341,7 +339,7 @@ body {
     }
 }
 
-/* Keyframe for modal animation */
+
 @keyframes fadeInScale {
     from {
         opacity: 0;
@@ -351,4 +349,138 @@ body {
         opacity: 1;
         transform: scale(1);
     }
+}
+
+/* ———————————————————————————————
+   NEW: AWARENESS & UPDATES SECTION (PUBLIC)
+   ——————————————————————————————— */
+.awareness-section {
+  padding: 80px 5%;
+  background: #f8fcfc;
+  text-align: center;
+}
+
+.awareness-section h2 {
+  font-size: 2.5em;
+  color: #006666;
+  margin-bottom: 50px;
+  position: relative;
+  display: inline-block;
+}
+
+.awareness-section h2::after {
+  content: '';
+  position: absolute;
+  bottom: -15px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 80px;
+  height: 5px;
+  background: linear-gradient(90deg, #FFD700, #FFC107);
+  border-radius: 3px;
+}
+
+.awareness-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  gap: 30px;
+  max-width: 1400px;
+  margin: 0 auto;
+}
+
+.awareness-card {
+  background: white;
+  border-radius: 16px;
+  overflow: hidden;
+  box-shadow: 0 8px 25px rgba(0,0,0,0.1);
+  transition: all 0.3s ease;
+  border-top: 6px solid #FFD700;
+}
+
+.awareness-card:hover {
+  transform: translateY(-10px);
+  box-shadow: 0 15px 40px rgba(0,0,0,0.15);
+}
+
+.awareness-img {
+  width: 100%;
+  height: 200px;
+  object-fit: cover;
+}
+
+.awareness-video {
+  width: 100%;
+  height: 220px;
+  border: none;
+}
+
+.awareness-text {
+  padding: 20px;
+  text-align: left;
+}
+
+.awareness-text h3 {
+  color: #006666;
+  margin: 0 0 12px 0;
+  font-size: 1.4rem;
+}
+
+.awareness-text p {
+  color: #444;
+  line-height: 1.7;
+  margin-bottom: 10px;
+}
+
+.awareness-text small {
+  color: #888;
+  font-style: italic;
+}
+
+/* Make awareness cards clickable & beautiful */
+.awareness-card-clickable {
+  cursor: pointer;
+  transition: all 0.3s ease;
+  border: 2px solid transparent;
+}
+
+.awareness-card-clickable:hover {
+  transform: translateY(-8px);
+  box-shadow: 0 15px 35px rgba(0,0,0,0.15);
+  border-color: #FFD700;
+}
+
+.awareness-video-wrapper {
+  position: relative;
+  padding-bottom: 56.25%;
+  height: 0;
+  overflow: hidden;
+  border-radius: 12px 12px 0 0;
+  background: #000;
+}
+
+.awareness-video {
+  position: absolute;
+  top: 0; left: 0;
+  width: 100%;
+  height: 100%;
+  border: none;
+}
+
+.awareness-footer {
+  margin-top: 15px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  color: #666;
+  font-size: 0.9rem;
+}
+
+.read-more {
+  color: #006666;
+  font-weight: 600;
+  font-size: 0.95rem;
+}
+
+.read-more:hover {
+  color: #FFD700;
 }

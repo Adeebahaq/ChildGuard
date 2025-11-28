@@ -2,7 +2,7 @@
 
 import { BaseModel } from "./BaseModels";
 
-// Define the interface first
+
 export interface CaseReporter {
   reporter_id: string;
   user_id: string | null;
@@ -14,7 +14,7 @@ export interface CaseReporter {
 export class CaseReporterModel extends BaseModel {
   
   static reportCase(data: {
-    user_id?: string | null; // null if anonymous
+    user_id?: string | null; 
     phone?: string | null;
     is_anonymous?: boolean;
     location: string;
@@ -25,11 +25,11 @@ export class CaseReporterModel extends BaseModel {
   }) {
     this.init();
 
-    // Generate IDs
+   
     const reporterId = `REP-${Date.now()}-${Math.floor(Math.random() * 1000)}`;
     const reportId = `RPT-${Date.now()}-${Math.floor(Math.random() * 1000)}`;
 
-    // Insert reporter (anonymous or linked)
+    
     this.db.prepare(`
       INSERT INTO case_reporters (reporter_id, user_id, phone, is_anonymous)
       VALUES (?, ?, ?, ?)
@@ -40,7 +40,7 @@ export class CaseReporterModel extends BaseModel {
       data.is_anonymous ? 1 : 0
     );
 
-    // Insert the actual report
+   
     this.db.prepare(`
       INSERT INTO reports (report_id, reporter_id, location, description, child_name, child_age, photo_url)
       VALUES (?, ?, ?, ?, ?, ?, ?)
@@ -54,7 +54,7 @@ export class CaseReporterModel extends BaseModel {
       data.photo_url ?? null
     );
 
-    // Return the report
+    
     const report = this.db.prepare("SELECT * FROM reports WHERE report_id = ?").get(reportId);
     return report;
   }

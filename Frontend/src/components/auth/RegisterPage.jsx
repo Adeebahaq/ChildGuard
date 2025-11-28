@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import axios from 'axios';
-import './RegisterPage.css'; // Make sure your CSS file exists
+import './RegisterPage.css'; 
 
 function RegisterPage() {
   const [username, setUsername] = useState('');
@@ -20,12 +20,12 @@ function RegisterPage() {
     try {
       const API_URL = 'http://localhost:5000/api/auth/register';
 
-      // Prepare payload
+      
       const payload = {
         username: username.trim(),
         email: email.trim(),
         password,
-        role // must be one of: parent, sponsor, volunteer, case_reporter
+        role 
       };
 
       const response = await axios.post(API_URL, payload);
@@ -40,7 +40,7 @@ function RegisterPage() {
     } catch (err) {
       console.error('Registration Error:', err);
 
-      // Show backend error if available
+      
       if (err.response && err.response.data) {
         if (err.response.data.message) {
           setError(err.response.data.message);

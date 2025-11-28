@@ -1,0 +1,73 @@
+/* Main availability box */
+.availability-box {
+    background: #ffffff;
+    padding: 25px;
+    border-radius: 12px;
+    box-shadow: 0px 2px 8px rgba(0,0,0,0.1);
+    margin: 20px 0;
+}
+
+/* Title */
+.availability-box h2 {
+    font-size: 1.6em;
+    font-weight: 700;
+    color: #008080;  /* Teal */
+    margin-bottom: 20px;
+}
+
+/* Simple clean grid */
+.availability-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    margin-bottom: 25px;
+}
+
+/* Checkbox / Radio line item (NO BOXES) */
+.checkbox-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 5px 0;     /* light spacing, no box background */
+}
+
+/* Inputs */
+.checkbox-item input {
+    width: 18px;
+    height: 18px;
+    cursor: pointer;
+}
+
+/* Label */
+.checkbox-item label {
+    font-size: 1.1em;
+    font-weight: 500;
+    color: #333;
+}
+
+/* Highlight checked items with teal text ONLY */
+.checkbox-item input:checked + label {
+    color: #008080;  
+    font-weight: 600;
+}
+
+/* Save button */
+.btn-primary {
+    background-color: #008080;
+    color: white;
+    padding: 12px 25px;
+    font-size: 1.2em;
+    border: none;
+    cursor: pointer;
+    border-radius: 8px;
+    font-weight: 600;
+    transition: background 0.3s ease;
+}
+
+.btn-primary:hover {
+    background-color: #006666;
+}
+
+.btn-primary:active {
+    transform: scale(0.97);
+}

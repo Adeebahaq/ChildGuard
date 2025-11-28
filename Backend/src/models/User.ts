@@ -1,6 +1,7 @@
 // src/models/user.ts
 import { BaseModel } from "./BaseModels";
-import bcrypt from "bcrypt";
+import bcrypt from "bcryptjs";
+import crypto from "crypto";
 
 export interface User {
   user_id: string;
@@ -8,36 +9,47 @@ export interface User {
   email: string;
   password_hash: string;
   role: "parent" | "sponsor" | "volunteer" | "admin" | "case_reporter";
-  status: "active" | "inactive" | "suspended"; // Made non-optional, as DB sets a default
-  created_at: string; // Made non-optional, as DB sets a default
-  updated_at: string; // Made non-optional, as DB sets a default
+  status: "active" | "inactive" | "suspended";
+  created_at: string;
+  updated_at: string;
+}
+
+// Safe public profile
+export interface UserProfile {
+  user_id: string;
+  username: string;
+  email: string;
+  role: User["role"];
+  status: User["status"];
+  created_at: string;
+  updated_at: string;
 }
 
 export class UserModel extends BaseModel {
-  // Create user (synchronous)
+  static initDB() {
+    this.init();
+  }
+
+  // ========================
+  // CREATE & FIND
+  // ========================
   static create(data: {
     username: string;
     email: string;
     password: string;
     role: User["role"];
   }): User {
-    // ensure DB initialized
     this.init();
 
     const id = `USR-${Date.now()}-${Math.floor(Math.random() * 1000)}`;
-    // The salt rounds must be a number (10) as in the original code, but bcrypt.hashSync handles it.
     const hash = bcrypt.hashSync(data.password, 10);
 
-    const insert = this.db.prepare(`
-      INSERT INTO users (user_id, username, email, password_hash, role)
-      VALUES (?, ?, ?, ?, ?)
-    `);
+    this.db.prepare(`
+      INSERT INTO users (user_id, username, email, password_hash, role, status, created_at, updated_at)
+      VALUES (?, ?, ?, ?, ?, 'active', datetime('now'), datetime('now'))
+    `).run(id, data.username, data.email, hash, data.role);
 
-    insert.run(id, data.username, data.email, hash, data.role);
-
-    // SELECT * is crucial to get the defaults: status, created_at, updated_at
-    const user = this.db.prepare("SELECT * FROM users WHERE user_id = ?").get(id) as User;
-    return user;
+    return this.findById(id)!;
   }
 
   static findByEmail(email: string): User | null {
@@ -50,19 +62,111 @@ export class UserModel extends BaseModel {
     return this.db.prepare("SELECT * FROM users WHERE user_id = ?").get(id) as User | null;
   }
 
+  static getProfile(userId: string): UserProfile | null {
+    const user = this.findById(userId);
+    if (!user) return null;
+    const { password_hash, ...profile } = user;
+    return profile;
+  }
+
   static validatePassword(user: User, password: string): boolean {
     return bcrypt.compareSync(password, user.password_hash);
   }
 
-  static suspend(id: string): void {
+  // ========================
+  // PASSWORD RESET FLOW
+  // ========================
+
+  /**
+   * Generate a secure reset token and store it with expiry (15 minutes)
+   */
+  static generatePasswordResetToken(email: string): { token: string; expiresAt: number } | null {
     this.init();
-    // The DB only allows 'active', 'inactive', 'suspended'. No 'soft_delete'.
-    this.db.prepare("UPDATE users SET status = 'suspended', updated_at = datetime('now') WHERE user_id = ?").run(id);
+
+    const user = this.findByEmail(email);
+    if (!user) return null;
+
+    const token = crypto.randomBytes(32).toString("hex");
+    const expiresAt = Date.now() + 60 * 60 * 1000; 
+
+    
+    this.db.prepare(`
+      UPDATE users 
+      SET reset_token = ?, reset_token_expires_at = ?
+      WHERE user_id = ?
+    `).run(token, expiresAt, user.user_id);
+
+    return { token, expiresAt };
   }
 
-  static activate(id: string): void {
+  
+  static verifyResetToken(token: string): User | null {
     this.init();
-    // The DB only allows 'active', 'inactive', 'suspended'.
-    this.db.prepare("UPDATE users SET status = 'active', updated_at = datetime('now') WHERE user_id = ?").run(id);
+
+    const now = Date.now();
+    const row = this.db.prepare(`
+      SELECT * FROM users 
+      WHERE reset_token = ? AND reset_token_expires_at > ?
+    `).get(token, now) as User | undefined;
+
+    if (!row) return null;
+
+    
+    this.db.prepare(`
+      UPDATE users SET reset_token = NULL, reset_token_expires_at = NULL
+      WHERE user_id = ?
+    `).run(row.user_id);
+
+    return row;
   }
+
+  
+  static resetPassword(token: string, newPassword: string): boolean {
+    this.init();
+
+    const user = this.verifyResetToken(token);
+    if (!user) return false;
+
+    const newHash = bcrypt.hashSync(newPassword, 10);
+
+    const result = this.db.prepare(`
+      UPDATE users 
+      SET password_hash = ?, updated_at = datetime('now'),
+          reset_token = NULL, reset_token_expires_at = NULL
+      WHERE user_id = ?
+    `).run(newHash, user.user_id);
+
+    return result.changes > 0;
+  }
+
+ 
+  static suspend(id: string): boolean {
+    this.init();
+    const result = this.db.prepare(`
+      UPDATE users SET status = 'suspended', updated_at = datetime('now')
+      WHERE user_id = ?
+    `).run(id);
+    return result.changes > 0;
+  }
+
+  static activate(id: string): boolean {
+    this.init();
+    const result = this.db.prepare(`
+      UPDATE users SET status = 'active', updated_at = datetime('now')
+      WHERE user_id = ?
+    `).run(id);
+    return result.changes > 0;
+  }
+
+  static updateProfile(
+    userId: string,
+    data: { username?: string; email?: string }
+  ): UserProfile | null {
+    
+    return this.getProfile(userId);
+  }
+  static toPublicProfile(user: User): UserProfile {
+    const { user_id, username, email, role, status, created_at, updated_at } = user;
+    return { user_id, username, email, role, status, created_at, updated_at };
+}
 }

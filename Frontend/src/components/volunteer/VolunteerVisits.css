@@ -1,0 +1,53 @@
+/* Main container box */
+.dashboard-box {
+    background: #ffffff;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0px 2px 8px rgba(0,0,0,0.1);
+    margin-top: 20px;
+}
+
+/* Title */
+.dashboard-box h2 {
+    font-size: 1.6em;
+    font-weight: 700;
+    color: #008080; /* Teal heading */
+    margin-bottom: 20px;
+}
+
+/* Visit card */
+.visit-card {
+    background: #f8f9fa; /* Light background */
+    border-left: 6px solid #008080; /* Teal accent bar */
+    padding: 15px 20px;
+    border-radius: 8px;
+    margin-bottom: 15px;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+/* Hover effect */
+.visit-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0px 4px 12px rgba(0,0,0,0.15);
+}
+
+/* Text styles */
+.visit-card p {
+    margin: 6px 0;
+    font-size: 1.1em;
+}
+
+.visit-card strong {
+    color: #008080; /* Teal label text */
+}
+
+/* If a visit is completed */
+.visit-card.completed {
+    border-left-color: #ffc107; /* Gold accent for completed */
+}
+
+/* Empty state text */
+.dashboard-box p {
+    font-size: 1.1em;
+    color: #666;
+}

@@ -1,59 +1,76 @@
-.profile-card {
-    width: 420px;
-    margin: 20px auto;
-    padding: 25px;
-    background: #ffffff;
-    border-radius: 18px;
-    box-shadow: 0px 6px 25px rgba(0, 0, 0, 0.1);
-    transition: 0.25s ease;
-    animation: fadeIn 0.4s ease;
+/* src/components/User/UserProfile.css */
+
+/* Use flexbox to separate Title and Button */
+.profile-header {
+  display: flex;
+
+  align-items: center;
+  margin-bottom: 20px;
+  border-bottom: 1px solid #eee; /* Optional: adds a nice separator line */
+  padding-bottom: 10px;
 }
 
-.profile-card:hover {
-    box-shadow: 0px 8px 30px rgba(0, 0, 0, 0.15);
+.profile-info h2 {
+  margin: 0; /* Remove default margin so it aligns with button */
+  display: flex;
+  align-items: center;
+  gap: 10px;
 }
 
-/* Title */
-.profile-title {
-    text-align: center;
-    font-size: 1.7rem;
-    font-weight: 700;
-    color: #008080;
-    margin-bottom: 20px;
+/* --- Edit Button Styles --- */
+.edit-btn {
+  background-color: #007bff; /* Blue */
+  color: white;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 5px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 8px; /* Space between icon and text */
+  font-size: 14px;
+  transition: background-color 0.2s;
+}
+
+.edit-btn:hover {
+  background-color: #0056b3; /* Darker Blue on hover */
+}
+
+/* Existing styles */
+.profile-icon-header {
+  font-size: 1.5em;
+  color: #555;
+}
+
+.profile-icon {
+  margin-right: 8px;
+  color: #666;
+  vertical-align: -2px;
+}
+
+.profile-info p {
+  margin-bottom: 12px;
+  font-size: 16px;
 }
 
 
-.profile-row {
-    display: flex;
-    justify-content: space-between;
-    padding: 10px 0;
-    border-bottom: 1px solid #eee;
+
+/* --- Edit Button Styles --- */
+.edit-btn {
+  background-color: #008080; /* Teal Blue */
+  color: white;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 5px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 8px; /* Space between icon and text */
+  font-size: 14px;
+  transition: background-color 0.2s, transform 0.1s;
 }
 
-
-.label {
-    font-weight: 600;
-    color: #444;
-    font-size: 0.95rem;
-}
-
-
-.value {
-    color: #222;
-    font-size: 0.95rem;
-}
-
-
-.status-pill {
-    background: #008080;
-    color: #fff;
-    padding: 5px 12px;
-    border-radius: 12px;
-    font-weight: 600;
-}
-
-
-@keyframes fadeIn {
-    from { opacity: 0; transform: translateY(10px); }
-    to   { opacity: 1; transform: translateY(0); }
+.edit-btn:hover {
+  background-color: #006666; /* Darker teal on hover */
+  transform: scale(1.05); /* Slight zoom effect on hover */
 }

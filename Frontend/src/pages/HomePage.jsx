@@ -1,26 +1,36 @@
 // src/pages/HomePage.jsx
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
+import { useNavigate } from 'react-router-dom';
 import LoginPage from '../components/auth/LoginPage';
 import RegisterPage from '../components/auth/RegisterPage';
 import ReportCase from "../components/case/ReportCase";
 import './HomePage.css';
 import HeroImage from '../assets/child-future-contrast.jpg';
 
-function HomePage() {
+// Accept user and onLogin props from App.js
+function HomePage({ user, onLogin }) {
+  const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState('login');
   const [isPanelOpen, setIsPanelOpen] = useState(false);
   const [awarenessContent, setAwarenessContent] = useState([]);
   const [loading, setLoading] = useState(true);
 
   const roles = [
-    { title: "End Child Labor", icon: "Handshake", description: "Protect children from exploitation and hazardous agricultural work." },
-    { title: "Educational Support", icon: "Books", description: "Provide full sponsorship covering fees, books, and uniforms." },
-    { title: "Community Advocacy", icon: "Megaphone", description: "Raise awareness about child rights and facilitate anonymous reporting." },
-    { title: "Transparent Tracking", icon: "Checkmark", description: "Offer sponsors and parents real-time updates on child progress." },
+    { title: "End Child Labor", icon: "🤝", description: "Protect children from exploitation and hazardous agricultural work." },
+    { title: "Educational Support", icon: "📚", description: "Provide full sponsorship covering fees, books, and uniforms." },
+    { title: "Community Advocacy", icon: "📣", description: "Raise awareness about child rights and facilitate anonymous reporting." },
+    { title: "Transparent Tracking", icon: "✔️", description: "Offer sponsors and parents real-time updates on child progress." },
   ];
 
-  // Fetch published awareness content (public endpoint)
+  // Listen for NavBar events
+  useEffect(() => {
+    const handleAuthEvent = (e) => openPanel(e.detail);
+    window.addEventListener('openAuthPanel', handleAuthEvent);
+    return () => window.removeEventListener('openAuthPanel', handleAuthEvent);
+  }, []);
+
+  // Fetch awareness content
   useEffect(() => {
     const fetchAwareness = async () => {
       try {
@@ -42,13 +52,8 @@ function HomePage() {
 
   const closeModal = () => setIsPanelOpen(false);
 
-  // Helper: Convert YouTube watch URL to embed
-  const getEmbedUrl = (url) => {
-    if (!url) return "";
-    return url.replace("watch?v=", "embed/").replace("&", "?");
-  };
+  const getEmbedUrl = (url) => url ? url.replace("watch?v=", "embed/").replace("&", "?") : "";
 
-  // NEW: Open full article in beautiful popup
   const openFullArticle = (item) => {
     const win = window.open('', '_blank', 'width=900,height=700,scrollbars=yes,resizable=yes');
     win.document.write(`
@@ -81,31 +86,42 @@ function HomePage() {
     win.document.close();
   };
 
+  const goToDashboard = () => {
+    if (!user) return openPanel('login');
+
+    // Role-based navigation
+    switch (user.role) {
+      case 'volunteer':
+        navigate(`/volunteer/${user.id}/dashboard`);
+        break;
+      case 'admin':
+        navigate('/admin');
+        break;
+      default:
+        navigate('/');
+    }
+  };
+
   return (
     <div className="home-page-container">
-      {/* Your existing nav and modal code */}
-      <nav className="auth-top-right" onClick={(e) => e.preventDefault()}>
-        <button className="top-tab" onClick={() => openPanel('login')}>Login</button>
-        <button className="top-tab register-btn" onClick={() => openPanel('register')}>Register</button>
-        <button className="top-tab about-btn" onClick={() => openPanel('about')}>About Us</button>
-      </nav>
-
+      
+      {/* Modal Logic */}
       {isPanelOpen && (
         <div className="auth-modal-overlay" onClick={closeModal}>
           <div className="auth-modal" onClick={e => e.stopPropagation()}>
             <button className="close-btn" onClick={closeModal}>×</button>
             <div className="form-body">
               <div className="modal-content-area">
-                {activeTab === 'login' && <LoginPage />}
+                {activeTab === 'login' && <LoginPage onLogin={onLogin} closeModal={closeModal} />}
                 {activeTab === 'register' && <RegisterPage />}
-                {activeTab === 'about' && (
+                {activeTab === 'about' && !user && (
                   <div className="about-us-content">
                     <h2>ChildGuard: Our Mission</h2>
                     <p>ChildGuard is a web-based platform dedicated to protecting children from labor exploitation...</p>
-                    <button className="cta-btn" onClick={() => openPanel('register')}>Join the Cause</button>
+                    <button className="cta-btn" onClick={() => openPanel('register')}>Join us</button>
                   </div>
                 )}
-                {activeTab === 'report' && <ReportCase userId={null} />}
+                {activeTab === 'report' && <ReportCase userId={user ? user.id : null} />}
               </div>
             </div>
           </div>
@@ -120,7 +136,11 @@ function HomePage() {
             A centralized platform to end child labor through <b>Educational Sponsorship</b> and <b>Anonymous Reporting</b>.
           </p>
           <div className="hero-buttons">
-            <button className="cta-btn" onClick={() => openPanel('register')}>Sponsor a Child Today</button>
+            {user ? (
+              <button className="cta-btn" onClick={goToDashboard}>Go to Dashboard</button>
+            ) : (
+              <button className="cta-btn" onClick={() => openPanel('register')}>Sponsor a Child Today</button>
+            )}
             <button className="cta-btn-outline" onClick={() => openPanel('report')}>Report a Case</button>
           </div>
         </div>
@@ -143,7 +163,7 @@ function HomePage() {
         </div>
       </section>
 
-      {/* NEW: Awareness & Updates Section (Public) */}
+      {/* Awareness & Updates */}
       <section className="awareness-section">
         <h2>Public Awareness Content</h2>
         {loading ? (
@@ -157,46 +177,25 @@ function HomePage() {
                 key={item.content_id}
                 className="awareness-card awareness-card-clickable"
                 onClick={() => {
-                  if (item.type === 'article' || item.type === 'guide') {
-                    openFullArticle(item);
-                  } else if (item.type === 'video' && item.content.includes('youtube.com')) {
-                    window.open(item.content, '_blank');
-                  }
+                  if (item.type === 'article' || item.type === 'guide') openFullArticle(item);
+                  else if (item.type === 'video' && item.content.includes('youtube.com')) window.open(item.content, '_blank');
                 }}
                 title={item.type === 'video' ? "Click to watch on YouTube" : "Click to read full article"}
               >
-                {/* Show YouTube Video */}
                 {item.type === 'video' && item.content.includes('youtube.com') && (
                   <div className="awareness-video-wrapper">
-                    <iframe
-                      src={getEmbedUrl(item.content)}
-                      title={item.title}
-                      allowFullScreen
-                      className="awareness-video"
-                    ></iframe>
+                    <iframe src={getEmbedUrl(item.content)} title={item.title} allowFullScreen className="awareness-video" />
                   </div>
                 )}
-
-                {/* Show Article/Guide Content */}
                 <div className="awareness-text">
                   <h3>{item.title}</h3>
-                  <p 
-                    dangerouslySetInnerHTML={{ 
-                      __html: item.content.length > 280 
-                        ? item.content.substring(0, 280) + "..." 
-                        : item.content 
-                    }} 
-                  />
+                  <p dangerouslySetInnerHTML={{
+                    __html: item.content.length > 280 ? item.content.substring(0, 280) + "..." : item.content
+                  }} />
                   <div className="awareness-footer">
-                    <small>
-                      Published on: {item.published_at ? new Date(item.published_at).toLocaleDateString() : "Recently"}
-                    </small>
-                    {(item.type === 'article' || item.type === 'guide') && item.content.length > 280 && (
-                      <span className="read-more">Read full article →</span>
-                    )}
-                    {item.type === 'video' && (
-                      <span className="read-more">Watch Video →</span>
-                    )}
+                    <small>Published on: {item.published_at ? new Date(item.published_at).toLocaleDateString() : "Recently"}</small>
+                    {(item.type === 'article' || item.type === 'guide') && item.content.length > 280 && <span className="read-more">Read full article →</span>}
+                    {item.type === 'video' && <span className="read-more">Watch Video →</span>}
                   </div>
                 </div>
               </div>

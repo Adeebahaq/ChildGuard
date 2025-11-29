@@ -1,5 +1,4 @@
 // src/pages/VolunteerDashboard.jsx
-
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { useParams } from "react-router-dom";
@@ -16,7 +15,7 @@ const VolunteerDashboard = () => {
   const [volunteer, setVolunteer] = useState(null);
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState("");
-  const [activeTab, setActiveTab] = useState("profile"); // default tab
+  const [activeSection, setActiveSection] = useState("profile"); // default section
 
   const API_URL = "http://localhost:5000/";
 
@@ -41,9 +40,9 @@ const VolunteerDashboard = () => {
 
       setVolunteer(vol);
 
-      // Automatically set tab for pending volunteers
+      // Automatically set section for pending volunteers
       if (vol.status === "pending") {
-        setActiveTab("approval");
+        setActiveSection("approval");
       }
     } catch (err) {
       console.error(err);
@@ -58,62 +57,51 @@ const VolunteerDashboard = () => {
   }, [volunteerId]);
 
   if (loading) return <p>Loading dashboard...</p>;
-
   if (!volunteer) return <p>{message || "No volunteer data found."}</p>;
+
+  // If volunteer is in 'requested' status, show pending message
+  if (volunteer.status === "requested") {
+    return (
+      <div className="volunteer-dashboard">
+        <p>Your request is pending approval.</p>
+      </div>
+    );
+  }
 
   return (
     <div className="volunteer-dashboard">
-      {/* Show message if status is requested but not approved */}
-      {volunteer.status === "requested" && (
-        <p>Your request is pending approval.</p>
+      {/* Clickable cards for sections */}
+      {volunteer.status === "approved" && (
+        <div className="dashboard-sections">
+          <div
+            className="section-card"
+            onClick={() => setActiveSection("profile")}
+          >
+            Profile
+          </div>
+          <div
+            className="section-card"
+            onClick={() => setActiveSection("availability")}
+          >
+            Availability
+          </div>
+          <div
+            className="section-card"
+            onClick={() => setActiveSection("visits")}
+          >
+            Assigned Visits
+          </div>
+          <div
+            className="section-card"
+            onClick={() => setActiveSection("completed")}
+          >
+            Completed Visits
+          </div>
+        </div>
       )}
 
-      {/* Tabs */}
-      <div className="dashboard-tabs">
-        {volunteer.status === "pending" && (
-          <button
-            className={activeTab === "approval" ? "active" : ""}
-            onClick={() => setActiveTab("approval")}
-          >
-            Request Approval
-          </button>
-        )}
-
-        {volunteer.status === "approved" && (
-          <>
-            <button
-              className={activeTab === "profile" ? "active" : ""}
-              onClick={() => setActiveTab("profile")}
-            >
-              Profile
-            </button>
-
-            <button
-              className={activeTab === "availability" ? "active" : ""}
-              onClick={() => setActiveTab("availability")}
-            >
-              Availability
-            </button>
-
-            <button
-              className={activeTab === "visits" ? "active" : ""}
-              onClick={() => setActiveTab("visits")}
-            >
-              Assigned Visits
-            </button>
-
-            <button
-              className={activeTab === "completed" ? "active" : ""}
-              onClick={() => setActiveTab("completed")}
-            >
-              Completed Visits
-            </button>
-          </>
-        )}
-      </div>
-
-      {/* Render tab content */}
-      {volunteer.status === "pending" && activeTab === "approval" && (
+      {/* Render section content */}
+      {volunteer.status === "pending" && activeSection === "approval" && (
         <VolunteerApprovalRequest
           volunteer={volunteer}
           setVolunteer={setVolunteer}
@@ -121,22 +109,22 @@ const VolunteerDashboard = () => {
         />
       )}
 
-      {volunteer.status === "approved" && activeTab === "profile" && (
+      {volunteer.status === "approved" && activeSection === "profile" && (
         <UserProfile userId={volunteerId} />
       )}
 
-      {volunteer.status === "approved" && activeTab === "availability" && (
+      {volunteer.status === "approved" && activeSection === "availability" && (
         <VolunteerAvailability
           volunteer={volunteer}
           setVolunteer={setVolunteer}
         />
       )}
 
-      {volunteer.status === "approved" && activeTab === "visits" && (
+      {volunteer.status === "approved" && activeSection === "visits" && (
         <VolunteerVisits volunteerId={volunteer.volunteer_id} only="pending" />
       )}
 
-      {volunteer.status === "approved" && activeTab === "completed" && (
+      {volunteer.status === "approved" && activeSection === "completed" && (
         <VolunteerVisits
           volunteerId={volunteer.volunteer_id}
           only="completed"

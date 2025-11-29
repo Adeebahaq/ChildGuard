@@ -1,6 +1,6 @@
 // src/models/user.ts
 import { BaseModel } from "./BaseModels";
-import bcrypt from "bcrypt";
+import bcrypt from "bcryptjs";
 import crypto from "crypto";
 
 export interface User {
@@ -158,15 +158,44 @@ export class UserModel extends BaseModel {
     return result.changes > 0;
   }
 
-  static updateProfile(
-    userId: string,
-    data: { username?: string; email?: string }
-  ): UserProfile | null {
-    
-    return this.getProfile(userId);
+static updateProfile(
+  userId: string,
+  data: { username?: string; email?: string }
+): UserProfile | null {
+  this.init();
+
+  // Fetch existing user
+  const user = this.findById(userId);
+  if (!user) return null;
+
+  // If email is changing, make sure it's not already used by another user
+  if (data.email && data.email !== user.email) {
+    const existing = this.findByEmail(data.email);
+    if (existing && existing.user_id !== userId) {
+      throw new Error("Email already in use by another account");
+    }
   }
+
+  const newUsername = data.username ?? user.username;
+  const newEmail = data.email ?? user.email;
+
+  // Perform the update in the database
+  this.db.prepare(`
+    UPDATE users
+    SET username = ?, email = ?, updated_at = datetime('now')
+    WHERE user_id = ?
+  `).run(newUsername, newEmail, userId);
+
+  // Return updated profile
+  return this.getProfile(userId);
+}
+
   static toPublicProfile(user: User): UserProfile {
     const { user_id, username, email, role, status, created_at, updated_at } = user;
     return { user_id, username, email, role, status, created_at, updated_at };
 }
+
+
+
+
 }

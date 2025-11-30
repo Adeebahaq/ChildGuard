@@ -1,4 +1,4 @@
-// src/routes/volunteerRouter.ts
+// src/routes/volunteerRoutes.ts
 import { Router } from "express";
 import { authMiddleware } from "../middleware/authMiddleware";
 import { VolunteerModel } from "../models/volunteer";

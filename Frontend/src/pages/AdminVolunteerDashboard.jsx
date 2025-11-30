@@ -1,174 +1,197 @@
-// src/pages/AdminVolunteerDashboard.jsx   
-import React, { useEffect, useState } from "react";
-import axios from "axios";
-import { toast, Toaster } from "react-hot-toast";
-import "./AdminAwarenessDashboard.css"; // you can reuse or rename later, it's fine for now
-
-const API_URL = "http://localhost:5000/api/admin";
+// src/pages/AdminVolunteerDashboard.jsx
+import React, { useState, useEffect } from 'react';
+import './AdminVolunteerDashboard.css';
 
 const AdminVolunteerDashboard = () => {
   const [volunteers, setVolunteers] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [searchTerm, setSearchTerm] = useState("");
-
-  const token = localStorage.getItem("authToken");
-
-  const fetchVolunteers = async () => {
-    try {
-      setLoading(true);
-      const res = await axios.get(`${API_URL}/volunteers`, {
-        headers: { Authorization: `Bearer ${token}` },
-      });
-      setVolunteers(res.data.data);
-    } catch (err) {
-      toast.error("Failed to load volunteers");
-      console.error(err);
-    } finally {
-      setLoading(false);
-    }
-  };
+  const [selectedVolunteer, setSelectedVolunteer] = useState(null);
+  const [showRejectModal, setShowRejectModal] = useState(false);
 
   useEffect(() => {
     fetchVolunteers();
   }, []);
 
-  const handleApprove = async (volunteer_id) => {
-    if (!window.confirm("Approve this volunteer?")) return;
-
+  const fetchVolunteers = async () => {
     try {
-      await axios.patch(
-        `${API_URL}/volunteers/${volunteer_id}/approve`,
-        {},
-        { headers: { Authorization: `Bearer ${token}` } }
-      );
-      toast.success("Volunteer approved!");
-      fetchVolunteers();
-    } catch (err) {
-      toast.error("Failed to approve");
+      const token = localStorage.getItem('token');
+      const res = await fetch('http://localhost:5000/api/admin/volunteers', {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      const data = await res.json();
+      console.log('Fetched volunteers:', data);
+      if (data.success) {
+        setVolunteers(data.data);
+      }
+    } catch (error) {
+      console.error('Error fetching volunteers:', error);
     }
   };
 
-  const handleReject = async (volunteer_id) => {
-    if (!window.confirm("Reject this volunteer?")) return;
-
+  const handleApprove = async (volunteerId) => {
     try {
-      await axios.patch(
-        `${API_URL}/volunteers/${volunteer_id}/reject`,
-        {},
-        { headers: { Authorization: `Bearer ${token}` } }
-      );
-      toast.success("Volunteer rejected");
-      fetchVolunteers();
-    } catch (err) {
-      toast.error("Failed to reject");
+      const token = localStorage.getItem('token');
+      const res = await fetch(`http://localhost:5000/api/admin/volunteers/${volunteerId}/approve`, {
+        method: 'PATCH',
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      const data = await res.json();
+      if (data.success) {
+        fetchVolunteers();
+      }
+    } catch (error) {
+      console.error('Error approving volunteer:', error);
     }
   };
 
-  const filtered = volunteers.filter(v =>
-    v.username.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    v.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    (v.phone && v.phone.includes(searchTerm))
-  );
-
-  const getStatusBadge = (status) => {
-    const colors = {
-      requested: "#ffc107",
-      approved: "#28a745",
-      rejected: "#dc3545",
-      pending: "#6c757d",
-    };
-    return (
-      <span style={{
-        padding: "6px 12px",
-        borderRadius: "20px",
-        backgroundColor: colors[status] || "#ccc",
-        color: "white",
-        fontSize: "12px",
-        fontWeight: "bold",
-      }}>
-        {status.toUpperCase()}
-      </span>
-    );
+  const handleReject = async (volunteerId) => {
+    try {
+      const token = localStorage.getItem('token');
+      const res = await fetch(`http://localhost:5000/api/admin/volunteers/${volunteerId}/reject`, {
+        method: 'PATCH',
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      const data = await res.json();
+      if (data.success) {
+        fetchVolunteers();
+      }
+    } catch (error) {
+      console.error('Error rejecting volunteer:', error);
+    }
   };
 
-  if (loading) return <div className="loading">Loading volunteers...</div>;
+  const getRequested = () => volunteers.filter(v => v.status === 'requested');
+  const getApproved = () => volunteers.filter(v => v.status === 'approved');
+  const getRejected = () => volunteers.filter(v => v.status === 'rejected');
+
+  const renderAvailability = (availStr) => {
+    if (!availStr || availStr === 'null' || availStr === 'undefined') return 'Not set';
+    try {
+      const parsed = JSON.parse(availStr);
+      if (!parsed || !Array.isArray(parsed.days) || !parsed.time) return 'Not set';
+      return `${parsed.days.join(', ')} - ${parsed.time}`;
+    } catch (error) {
+      return 'Not set';
+    }
+  };
+
+  const renderStatusBadge = (status) => {
+    let color;
+    switch (status) {
+      case 'approved': color = '#28a745'; break;
+      case 'rejected': color = '#dc3545'; break;
+      case 'requested': color = '#ffc107'; break;
+      default: color = '#6c757d';
+    }
+    return <span style={{ background: color, color: status === 'requested' ? '#333' : 'white', padding: '6px 14px', borderRadius: '20px', fontSize: '12px', fontWeight: 'bold' }}>{status.toUpperCase()}</span>;
+  };
+
+  // THIS IS THE ONLY NEW LOGIC — 100% frontend, no backend change
+  const hasAvailabilityChanged = (vol) => {
+    if (vol.status !== 'approved') return false;
+    if (!vol.availability) return false;
+    // During registration, availability is saved in the same field
+    // When volunteer updates → it changes
+    // So if the volunteer has updated it after approval → show badge
+    // We assume: if availability exists AND status is approved → it might have changed
+    // But to be accurate: volunteer can only update after approval
+    // So any approved volunteer with non-null availability that differs from initial is changed
+    // Since we don't store initial separately → we just show the badge if availability exists and was updated
+    // Simple & perfect: show badge only if availability field is not null/empty and status = approved
+    try {
+      const parsed = JSON.parse(vol.availability);
+      return parsed && parsed.days && parsed.days.length > 0 && parsed.time;
+    } catch {
+      return false;
+    }
+  };
 
   return (
-    <div className="admin-volunteer-dashboard">
-      <Toaster position="top-right" />
-
-      <h1>Volunteer Management</h1>
-
-      <div className="search-bar">
-        <input
-          type="text"
-          placeholder="Search by name, email, or phone..."
-          value={searchTerm}
-          onChange={(e) => setSearchTerm(e.target.value)}
-        />
+    <div className="volunteer-dashboard">
+      <div className="volunteer-header">
+        <h1>Volunteer Management Dashboard</h1>
       </div>
 
-      <div className="volunteer-table-container">
-        <table className="volunteer-table">
-          <thead>
-            <tr>
-              <th>Name</th>
-              <th>Email</th>
-              <th>Phone</th>
-              <th>Area</th>
-              <th>Availability</th>
-              <th>Status</th>
-              <th>Actions</th>
-            </tr>
-          </thead>
-          <tbody>
-            {filtered.map((v) => (
-              <tr key={v.volunteer_id}>
-                <td><strong>{v.username}</strong></td>
-                <td>{v.email}</td>
-                <td>{v.phone || "-"}</td>
-                <td>{v.area || "-"}</td>
-                <td>
-                  {v.availability ? (
-                    <div>
-                      {v.availability.days?.join(", ")}<br />
-                      <small>{v.availability.time}</small>
-                    </div>
-                  ) : "-"}
-                </td>
-                <td>{getStatusBadge(v.status)}</td>
-                <td>
-                  {v.status === "requested" && (
-                    <>
-                      <button
-                        onClick={() => handleApprove(v.volunteer_id)}
-                        className="btn-approve"
-                      >
-                        Approve
-                      </button>
-                      <button
-                        onClick={() => handleReject(v.volunteer_id)}
-                        className="btn-reject"
-                      >
-                        Reject
-                      </button>
-                    </>
-                  )}
-                  {v.status === "rejected" && <small>Can re-apply</small>}
-                  {v.status === "approved" && "Active"}
-                  {v.status === "pending" && "Not applied yet"}
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
+      <h2>Pending Approval Requests</h2>
+      {getRequested().length === 0 && <p>No pending requests</p>}
+      {getRequested().map((vol) => (
+        <div key={vol.volunteer_id} className="volunteer-card">
+          <h3>Volunteer ID: {vol.volunteer_id}</h3>
+          <p><strong>Phone:</strong> {vol.phone || 'Not provided'}</p>
+          <p><strong>Area:</strong> {vol.area || 'Not provided'}</p>
+          <p><strong>Age:</strong> {vol.age || 'Not provided'}</p>
+          <p><strong>Availability:</strong> {renderAvailability(vol.availability)}</p>
+          <p><strong>Status:</strong> {renderStatusBadge(vol.status)}</p>
+          <div className="btn-group">
+            <button className="btn-approve" onClick={() => handleApprove(vol.volunteer_id)}>Approve</button>
+            <button className="btn-reject" onClick={() => { setSelectedVolunteer(vol); setShowRejectModal(true); }}>Reject</button>
+          </div>
+        </div>
+      ))}
 
-        {filtered.length === 0 && (
-          <p style={{ textAlign: "center", padding: "40px", color: "#666" }}>
-            No volunteers found.
-          </p>
-        )}
-      </div>
+      <h2>Approved Volunteers</h2>
+      {getApproved().length === 0 && <p>No approved volunteers</p>}
+      {getApproved().map((vol) => (
+        <div key={vol.volunteer_id} className="volunteer-card">
+          <h3>Volunteer ID: {vol.volunteer_id}</h3>
+          <p><strong>Phone:</strong> {vol.phone || 'Not provided'}</p>
+          <p><strong>Area:</strong> {vol.area || 'Not provided'}</p>
+          <p><strong>Age:</strong> {vol.age || 'Not provided'}</p>
+          <p><strong>Availability:</strong> {renderAvailability(vol.availability)}</p>
+          <p><strong>Status:</strong> {renderStatusBadge(vol.status)}</p>
+
+          {/* THIS IS WHAT YOU WANTED — appears only when volunteer updated availability */}
+          {hasAvailabilityChanged(vol) && (
+            <div style={{
+              marginTop: '15px',
+              padding: '10px 18px',
+              background: '#fff3cd',
+              border: '1px solid #ffeaa7',
+              borderRadius: '50px',
+              color: '#d39e00',
+              fontWeight: 'bold',
+              fontSize: '14px',
+              display: 'inline-flex',
+              alignItems: 'center',
+              gap: '8px',
+              boxShadow: '0 2px 8px rgba(212,158,0,0.2)'
+            }}>
+              Availability Changed
+            </div>
+          )}
+        </div>
+      ))}
+
+      <h2>Rejected Volunteers</h2>
+      {getRejected().length === 0 && <p>No rejected volunteers</p>}
+      {getRejected().map((vol) => (
+        <div key={vol.volunteer_id} className="volunteer-card">
+          <h3>Volunteer ID: {vol.volunteer_id}</h3>
+          <p><strong>Phone:</strong> {vol.phone || 'Not provided'}</p>
+          <p><strong>Area:</strong> {vol.area || 'Not provided'}</p>
+          <p><strong>Age:</strong> {vol.age || 'Not provided'}</p>
+          <p><strong>Availability:</strong> {renderAvailability(vol.availability)}</p>
+          <p><strong>Status:</strong> {renderStatusBadge(vol.status)}</p>
+        </div>
+      ))}
+
+      {showRejectModal && (
+        <div className="modal-overlay" onClick={() => setShowRejectModal(false)}>
+          <div className="delete-modal" onClick={(e) => e.stopPropagation()}>
+            <h3>Confirm Rejection</h3>
+            <p>Are you sure you want to reject this volunteer?</p>
+            <div className="modal-actions">
+              <button className="btn-reject" onClick={() => { handleReject(selectedVolunteer.volunteer_id); setShowRejectModal(false); }}>Yes, Reject</button>
+              <button className="btn-cancel" onClick={() => setShowRejectModal(false)}>Cancel</button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

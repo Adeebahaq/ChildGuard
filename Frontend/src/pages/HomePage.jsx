@@ -207,6 +207,51 @@ function HomePage({ user, onLogin }) {
       <footer className="footer">
         &copy; 2025 ChildGuard. All Rights Reserved.
       </footer>
+
+      {/* ——————— EMERGENCY WHATSAPP FLOATING BUTTON ——————— */}
+      <a
+        href="https://wa.me/923216604318?text=EMERGENCY%20CHILD%20IN%20DANGER%21%0A%0AI%20am%20reporting%20a%20child%20in%20immediate%20danger%21%0APlease%20reply%20NOW%21"
+        target="_blank"
+        rel="noopener noreferrer"
+        style={{
+          position: "fixed",
+          bottom: "30px",
+          right: "30px",
+          width: "70px",
+          height: "70px",
+          backgroundColor: "#d32f2f",
+          color: "white",
+          borderRadius: "50%",
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+          fontSize: "40px",
+          fontWeight: "bold",
+          boxShadow: "0 8px 30px rgba(211, 47, 47, 0.6)",
+          zIndex: 9999,
+          textDecoration: "none",
+          animation: "pulse 2s infinite",
+          cursor: "pointer"
+        }}
+        title="EMERGENCY — Contact Admin on WhatsApp IMMEDIATELY"
+      >
+        !
+      </a>
+
+      {/* Pulsing animation for urgency */}
+      <style jsx>{`
+        @keyframes pulse {
+          0% {
+            box-shadow: 0 0 0 0 rgba(211, 47, 47, 0.8);
+          }
+          70% {
+            box-shadow: 0 0 0 20px rgba(211, 47, 47, 0);
+          }
+          100% {
+            box-shadow: 0 0 0 0 rgba(211, 47, 47, 0);
+          }
+        }
+      `}</style>
     </div>
   );
 }

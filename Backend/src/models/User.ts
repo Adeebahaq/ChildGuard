@@ -1,6 +1,6 @@
 // src/models/user.ts
 import { BaseModel } from "./BaseModels";
-import bcrypt from "bcrypt";
+import bcrypt from "bcryptjs";
 import crypto from "crypto";
 
 export interface User {

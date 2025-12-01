@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState } from 'react'; 
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { AiFillEye, AiFillEyeInvisible } from 'react-icons/ai';
@@ -43,6 +43,7 @@ function LoginPage({ onLogin, closeModal }) {
         return;
       }
 
+      // Store data
       localStorage.setItem('authToken', token);
       if (onLogin) onLogin({ token, role, id: userId });
 
@@ -52,6 +53,9 @@ function LoginPage({ onLogin, closeModal }) {
       if (closeModal) closeModal();
 
       if (role === 'volunteer') navigate(`/volunteer/${userId}/dashboard`);
+       else if (role === 'parent') {
+        navigate('/parent/dashboard');
+      }
       else if (role === 'admin') navigate('/admin');
       else navigate('/');
     } catch (err) {

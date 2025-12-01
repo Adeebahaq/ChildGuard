@@ -1,0 +1,152 @@
+/* ParentDashboard.css - Updated for Final Layout and Yellow Color Scheme */
+
+/* --- FINAL LAYOUT & COLOR SCHEME --- */
+
+/* Parent dashboard container */
+.parent-dashboard-final { 
+    min-height: 100vh;
+    background: white; 
+    position: relative;
+    padding-top: 20px; 
+    /* The large yellow header bar is handled by the main app layout component
+       but we will define the core yellow color here. */
+}
+
+/* Custom class for the yellow color, matching the header in the image */
+:root {
+    --childguard-yellow: #ffc107; /* A bright, recognizable yellow/orange tone */
+}
+
+/* --- NAVIGATION CLEANUP (Ensuring no redundant styles conflict with the actual header) --- */
+
+/* Remove any conflicting header styles from previous iterations */
+.parent-header {
+    display: none;
+}
+
+/* --- CARD DISPLAY STYLES --- */
+
+/* Welcome Area */
+.dashboard-header-card-style {
+    text-align: center;
+    margin-top: 2rem; /* Reduced margin since the custom nav is gone */
+    margin-bottom: 2rem;
+}
+
+.welcome-title-card-style {
+    font-size: 2.5rem;
+    font-weight: 700;
+    color: #000000;
+    margin-bottom: 0.5rem;
+}
+
+.welcome-subtitle-card-style {
+    font-size: 1.1rem;
+    color: #718096; 
+    font-weight: 400;
+}
+
+/* Card Layout Grid (3-column layout based on the last image) */
+.dashboard-card-grid {
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap; 
+    gap: 30px; 
+    max-width: 1000px; /* Adjusted max width for 3 cards */
+    margin: 0 auto;
+    padding: 20px;
+}
+
+.dashboard-card-style {
+    background: white;
+    border-radius: 15px;
+    padding: 30px 20px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    cursor: pointer;
+    position: relative;
+    max-width: 300px; 
+    min-height: 200px;
+    text-align: center;
+    border: 1px solid #e2e8f0; 
+    flex: 1 1 280px; /* Allows cards to grow/shrink but maintain a min width */
+}
+
+.dashboard-card-style:hover {
+    transform: translateY(-5px); 
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.15);
+}
+
+/* Color change for the prominent header button/oval */
+.card-oval-header-yellow {
+    background-color: var(--childguard-yellow); /* Using the defined yellow color */
+    color: white;
+    font-size: 1rem;
+    font-weight: 700;
+    padding: 10px 25px;
+    border-radius: 50px; 
+    margin-bottom: 15px;
+    display: inline-block; 
+    min-width: 180px; 
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+    position: absolute;
+    top: -20px; 
+    left: 50%;
+    transform: translateX(-50%);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.card-subtitle-body {
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: #1a202c;
+    margin: 15px 0 5px 0;
+}
+
+.card-description-body {
+    color: #718096;
+    font-size: 0.9rem;
+    line-height: 1.4;
+}
+/* Section navigation cards */
+.dashboard-sections {
+    display: flex;
+    gap: 15px;
+    margin-bottom: 20px;
+    flex-wrap: wrap;
+}
+
+.section-card {
+    padding: 15px 25px;
+    background: white;
+    border: 2px solid #e0e0e0;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-weight: 600;
+    color: #333;
+}
+
+.section-card:hover {
+    background: #f0f0f0;
+    border-color: #ffc107;
+}
+
+.section-card.active {
+    background: #ffc107;
+    border-color: #ffc107;
+    color: white;
+}
+
+/* Media Queries */
+@media (max-width: 1050px) {
+    .dashboard-card-grid {
+        max-width: 650px; /* Force 2-column layout earlier */
+    }
+}
+@media (max-width: 680px) {
+    .dashboard-card-grid {
+        max-width: 350px; /* Force 1-column layout */
+    }
+}

@@ -1,0 +1,99 @@
+/* Main container box (Reusing the dashboard-box concept from volunteer visits) */
+.challans-dashboard-box {
+    background: #ffffff;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0px 2px 8px rgba(0,0,0,0.1);
+    margin-top: 20px;
+}
+
+/* Title */
+.challans-dashboard-box h2 {
+    font-size: 1.6em;
+    font-weight: 700;
+    color: #008080; /* Teal heading */
+    margin-bottom: 20px;
+}
+
+/* Challan card */
+.challan-card {
+    background: #f8f9fa; /* Light background */
+    border-left: 6px solid;
+    padding: 15px 20px;
+    border-radius: 8px;
+    margin-bottom: 15px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+/* Hover effect */
+.challan-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0px 4px 12px rgba(0,0,0,0.15);
+}
+
+/* Status colors */
+.challan-card.pending {
+    border-left-color: #ffc107; /* Gold for pending */
+}
+.challan-card.paid {
+    border-left-color: #28a745; /* Green for paid */
+}
+.challan-card.rejected {
+    border-left-color: #dc3545; /* Red for rejected */
+}
+
+/* Text styles */
+.challan-details p {
+    margin: 6px 0;
+    font-size: 1.1em;
+}
+
+.challan-details strong {
+    color: #008080; /* Teal label text */
+}
+
+/* Status badge */
+.status-badge {
+    padding: 5px 10px;
+    border-radius: 5px;
+    font-weight: bold;
+    font-size: 0.9em;
+    text-transform: uppercase;
+}
+
+.status-badge.pending {
+    background-color: #ffc107;
+    color: #333;
+}
+.status-badge.paid {
+    background-color: #28a745;
+    color: white;
+}
+.status-badge.rejected {
+    background-color: #dc3545;
+    color: white;
+}
+
+/* Button */
+.challan-card button {
+    background-color: #008080;
+    color: white;
+    padding: 8px 15px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-weight: 600;
+    transition: background-color 0.3s;
+}
+
+.challan-card button:hover {
+    background-color: #006666;
+}
+
+.challan-card button:disabled {
+    background-color: #ccc;
+    cursor: not-allowed;
+}

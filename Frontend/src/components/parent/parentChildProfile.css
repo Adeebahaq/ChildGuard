@@ -1,0 +1,79 @@
+/* Main container box (reusing dashboard-box concept) */
+.children-dashboard-box {
+    background: #ffffff;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0px 2px 8px rgba(0,0,0,0.1);
+    margin-top: 20px;
+}
+
+/* Title */
+.children-dashboard-box h2 {
+    font-size: 1.6em;
+    font-weight: 700;
+    color: #008080; /* Teal heading */
+    margin-bottom: 20px;
+}
+
+/* Child card */
+.child-card {
+    background: #f8f9fa; /* Light background */
+    border-left: 6px solid #ffc107; /* Gold accent bar */
+    padding: 15px 20px;
+    border-radius: 8px;
+    margin-bottom: 15px;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+/* Hover effect */
+.child-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0px 4px 10px rgba(0,0,0,0.1);
+}
+
+/* Text styles */
+.child-card p {
+    margin: 6px 0;
+    font-size: 1.05em;
+}
+
+.child-card strong {
+    color: #006666; /* Darker teal label text */
+}
+
+/* Form Styles */
+.child-form-container {
+    padding: 20px;
+    background-color: #e6f7f7; /* Very light teal background for the form area */
+    border-radius: 8px;
+    margin-bottom: 20px;
+}
+
+.child-form-container input,
+.child-form-container select {
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 15px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+}
+
+.child-form-container button {
+    background-color: #008080;
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.child-form-container button:hover {
+    background-color: #005f5f;
+}
+
+/* Disabled state */
+.child-form-container button:disabled {
+    background-color: #cccccc;
+    cursor: not-allowed;
+}

@@ -1,46 +1,38 @@
 // backend/src/routes/familyRoutes.ts
-import { Router, Request, Response } from 'express';
-import { authMiddleware } from '../middleware/authMiddleware';
+import { Router, Response } from 'express';
+import { authMiddleware, AuthRequest } from '../middleware/authMiddleware'; // FIXED: Import AuthRequest
 import { FamilyController } from '../controllers/familycontroller';
-
-// Since your controller uses AuthRequest, we cast it safely here
-type AuthRequest = Request & {
-  user: {
-    user_id: string;
-    role: string;
-    email?: string;
-  };
-};
 
 const router = Router();
 
-// Now TypeScript is happy — no overload errors, no any, no tricks
-router.post('/enroll', authMiddleware, (req: Request, res: Response) =>
-  FamilyController.enroll(req as AuthRequest, res)
+// Parent gets their own family
+router.get('/my', authMiddleware, (req: AuthRequest, res: Response) =>
+  FamilyController.getMyFamily(req, res)
 );
 
-router.get('/my', authMiddleware, (req: Request, res: Response) =>
-  FamilyController.getMyFamily(req as AuthRequest, res)
+// Admin/Volunteer gets all families
+router.get('/', authMiddleware, (req: AuthRequest, res: Response) =>
+  FamilyController.getAll(req, res)
 );
 
-router.get('/', authMiddleware, (req: Request, res: Response) =>
-  FamilyController.getAll(req as AuthRequest, res)
+// Get specific family by ID
+router.get('/:family_id', authMiddleware, (req: AuthRequest, res: Response) =>
+  FamilyController.getById(req, res)
 );
 
-router.get('/:family_id', authMiddleware, (req: Request, res: Response) =>
-  FamilyController.getById(req as AuthRequest, res)
+// Verify family
+router.patch('/:family_id/verify', authMiddleware, (req: AuthRequest, res: Response) =>
+  FamilyController.verifyFamily(req, res)
 );
 
-router.patch('/:family_id/verify', authMiddleware, (req: Request, res: Response) =>
-  FamilyController.verifyFamily(req as AuthRequest, res)
+// Update support status
+router.patch('/:family_id/support', authMiddleware, (req: AuthRequest, res: Response) =>
+  FamilyController.updateSupportStatus(req, res)
 );
 
-router.patch('/:family_id/support', authMiddleware, (req: Request, res: Response) =>
-  FamilyController.updateSupportStatus(req as AuthRequest, res)
-);
-
-router.patch('/my/proof', authMiddleware, (req: Request, res: Response) =>
-  FamilyController.uploadProofDocuments(req as AuthRequest, res)
+// Upload proof documents
+router.patch('/my/proof', authMiddleware, (req: AuthRequest, res: Response) =>
+  FamilyController.uploadProofDocuments(req, res)
 );
 
 export default router;

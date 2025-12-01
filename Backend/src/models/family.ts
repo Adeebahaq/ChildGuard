@@ -1,5 +1,6 @@
 // src/models/Family.ts
 import { BaseModel } from './BaseModels';
+import { ChildProfileModel } from './childprofile';
 
 // === ENSURE DB IS INITIALIZED ===
 BaseModel.init(); // ← MUST BE FIRST
@@ -142,6 +143,16 @@ export class FamilyModel extends BaseModel {
 
   static getAll(): Family[] {
     return this.getAllStmt.all() as Family[];
+  }
+
+  // Helper method to get family by parent_id (alias for clarity)
+  static getFamily(parent_id: string): Family | null {
+    return this.getByParentId(parent_id) || null;
+  }
+
+  // Helper method to get all children for a family
+  static getChildren(family_id: string) {
+    return ChildProfileModel.getByFamilyId(family_id);
   }
 
   static verifyFamily(

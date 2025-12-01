@@ -6,8 +6,8 @@ BaseModel.init();
 
 export interface FeeChallan {
   challan_id: string;
-  application_id: string;     // links to scholarship/application
-  child_id?: string;          // optional: link to child
+  application_id: string;     // links to sponsorship application
+  child_id: string;           // required: which child this is for
   amount: number;
   challan_url: string;
   status: 'pending' | 'paid' | 'expired';
@@ -36,6 +36,10 @@ export class FeeChallanModel extends BaseModel {
     return this.db.prepare('SELECT * FROM fee_challans WHERE application_id = ? ORDER BY created_at DESC');
   }
 
+  private static get getByChildIdStmt() {
+    return this.db.prepare('SELECT * FROM fee_challans WHERE child_id = ? ORDER BY created_at DESC');
+  }
+
   private static get markAsPaidStmt() {
     return this.db.prepare(`
       UPDATE fee_challans 
@@ -55,7 +59,7 @@ export class FeeChallanModel extends BaseModel {
   // === CREATE CHALLAN ===
   static create(data: {
     application_id: string;
-    child_id?: string;
+    child_id: string;          // NOW REQUIRED
     amount: number;
     challan_url: string;
   }): FeeChallan {
@@ -64,7 +68,7 @@ export class FeeChallanModel extends BaseModel {
     this.insertStmt.run(
       challan_id,
       data.application_id,
-      data.child_id || null,
+      data.child_id,             // No more || null
       data.amount,
       data.challan_url
     );
@@ -79,6 +83,11 @@ export class FeeChallanModel extends BaseModel {
 
   static getByApplication(application_id: string): FeeChallan[] {
     return this.getByApplicationStmt.all(application_id) as FeeChallan[];
+  }
+
+  // === GET BY CHILD ID ===
+  static getByChildId(child_id: string): FeeChallan[] {
+    return this.getByChildIdStmt.all(child_id) as FeeChallan[];
   }
 
   // === MARK AS PAID ===

@@ -1,99 +1,89 @@
-/* Main container box (Reusing the dashboard-box concept from volunteer visits) */
-.challans-dashboard-box {
-    background: #ffffff;
-    padding: 20px;
-    border-radius: 10px;
-    box-shadow: 0px 2px 8px rgba(0,0,0,0.1);
-    margin-top: 20px;
-}
 
-/* Title */
-.challans-dashboard-box h2 {
-    font-size: 1.6em;
-    font-weight: 700;
-    color: #008080; /* Teal heading */
-    margin-bottom: 20px;
-}
-
-/* Challan card */
-.challan-card {
-    background: #f8f9fa; /* Light background */
-    border-left: 6px solid;
-    padding: 15px 20px;
-    border-radius: 8px;
-    margin-bottom: 15px;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    transition: transform 0.2s ease, box-shadow 0.2s ease;
-}
-
-/* Hover effect */
-.challan-card:hover {
-    transform: translateY(-3px);
-    box-shadow: 0px 4px 12px rgba(0,0,0,0.15);
-}
-
-/* Status colors */
-.challan-card.pending {
-    border-left-color: #ffc107; /* Gold for pending */
-}
-.challan-card.paid {
-    border-left-color: #28a745; /* Green for paid */
-}
-.challan-card.rejected {
-    border-left-color: #dc3545; /* Red for rejected */
-}
-
-/* Text styles */
-.challan-details p {
-    margin: 6px 0;
-    font-size: 1.1em;
-}
-
-.challan-details strong {
-    color: #008080; /* Teal label text */
-}
-
-/* Status badge */
-.status-badge {
-    padding: 5px 10px;
-    border-radius: 5px;
-    font-weight: bold;
-    font-size: 0.9em;
-    text-transform: uppercase;
-}
-
-.status-badge.pending {
-    background-color: #ffc107;
-    color: #333;
-}
-.status-badge.paid {
-    background-color: #28a745;
-    color: white;
-}
-.status-badge.rejected {
-    background-color: #dc3545;
-    color: white;
-}
-
-/* Button */
-.challan-card button {
-    background-color: #008080;
-    color: white;
-    padding: 8px 15px;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-    font-weight: 600;
-    transition: background-color 0.3s;
-}
-
-.challan-card button:hover {
-    background-color: #006666;
-}
-
-.challan-card button:disabled {
-    background-color: #ccc;
-    cursor: not-allowed;
-}
+                .challans-dashboard-box {
+                    background: #ffffff;
+                    padding: 30px;
+                    border-radius: 12px;
+                    box-shadow: 0px 4px 16px rgba(0,0,0,0.1);
+                    margin-top: 20px;
+                    max-width: 700px;
+                    margin-left: auto;
+                    margin-right: auto;
+                    font-family: Inter, sans-serif;
+                }
+                .challans-dashboard-box h2 {
+                    font-size: 1.8em;
+                    font-weight: 700;
+                    color: #008080;
+                    margin-bottom: 25px;
+                    text-align: center;
+                }
+                .challan-card {
+                    background: #f9f9f9;
+                    border-left: 6px solid #008080;
+                    padding: 20px;
+                    border-radius: 10px;
+                    margin-bottom: 20px;
+                }
+                .form-group {
+                    display: flex;
+                    flex-direction: column;
+                    margin-top: 10px;
+                }
+                .form-group label {
+                    font-weight: 700;
+                    margin-top: 12px;
+                    margin-bottom: 6px;
+                    color: #008080;
+                    font-size: 1.2em;
+                }
+                .form-group input[type="number"],
+                .form-group input[type="date"],
+                .form-group input[type="file"] {
+                    padding: 14px 16px;
+                    border-radius: 8px;
+                    border: 1.5px solid #ccc;
+                    font-size: 1.1em;
+                    width: 100%;
+                    box-sizing: border-box;
+                }
+                /* File input specific styling override */
+                .form-group input[type="file"]::file-selector-button {
+                    background-color: #008080;
+                    color: white;
+                    padding: 8px 12px;
+                    border: none;
+                    border-radius: 6px;
+                    font-weight: 600;
+                    margin-right: 15px;
+                    cursor: pointer;
+                    transition: background-color 0.3s ease;
+                }
+                .form-group input[type="file"]::file-selector-button:hover {
+                    background-color: #006666;
+                }
+                .form-group button {
+                    background-color: #008080;
+                    color: white;
+                    padding: 12px 15px;
+                    border: none;
+                    border-radius: 8px;
+                    font-weight: 600;
+                    margin-top: 15px;
+                    cursor: pointer;
+                    transition: background-color 0.3s ease;
+                }
+                .form-group button:hover {
+                    background-color: #006666;
+                }
+                .error {
+                    color: #dc3545;
+                    font-size: 0.95em;
+                    margin-top: 4px;
+                }
+                /* Added style for button disabled state, using Tailwind for simplicity */
+                .disabled-button {
+                    background-color: #008080 !important;
+                    opacity: 0.6;
+                    cursor: not-allowed;
+                }
+            

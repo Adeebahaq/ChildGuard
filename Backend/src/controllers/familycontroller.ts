@@ -1,242 +1,211 @@
 // backend/src/controllers/familyController.ts
-import { Response } from 'express';
-import { AuthRequest } from '../middleware/authMiddleware';
-import { FamilyModel } from '../models/family';
-import { ChildProfileModel } from '../models/childprofile';
+import { Response } from "express";
+import { AuthRequest } from "../middleware/authMiddleware";
+import { FamilyModel } from "../models/family";
+import multer from "multer";
+import path from "path";
+import fs from "fs";
 
+// ---------------- Multer setup ----------------
+const uploadDir = path.join(__dirname, "../../uploads/family_docs");
+if (!fs.existsSync(uploadDir)) fs.mkdirSync(uploadDir, { recursive: true });
+
+const storage = multer.diskStorage({
+  destination: (_req, _file, cb) => cb(null, uploadDir),
+  filename: (_req, file, cb) => {
+    const ext = path.extname(file.originalname);
+    const name = file.originalname.replace(ext, "");
+    cb(null, `${name}-${Date.now()}${ext}`);
+  },
+});
+
+const upload = multer({ storage }).array("proof_documents", 5); // max 5 files
+
+// ---------------- Helper ----------------
+const handleFileUpload = (req: AuthRequest, res: Response) => {
+  return new Promise<Express.Multer.File[]>((resolve, reject) => {
+    upload(req as any, res as any, (err: any) => {
+      if (err) reject(err);
+      else resolve((req as any).files || []);
+    });
+  });
+};
+
+// ---------------- Controller ----------------
 export class FamilyController {
-  
-  // GET /api/families/my - Parent gets their own family
+  // -------------------------------
+  // Get current parent's family
+  // -------------------------------
   static async getMyFamily(req: AuthRequest, res: Response) {
     try {
       const parentId = req.user!.user_id;
-
       const family = FamilyModel.getByParentId(parentId);
 
       if (!family) {
-        return res.json({
-          success: true,
-          message: 'No family registered yet.',
-          family: null,
+        return res.status(404).json({
+          success: false,
+          message: "No family found for this parent.",
         });
       }
 
-      // Get all children for this family
-      const children = ChildProfileModel.getByFamilyId(family.family_id);
-
-      return res.json({
-        success: true,
-        message: 'Family data retrieved successfully.',
-        family: {
-          ...family,
-          children,
-        },
-      });
-    } catch (error: any) {
-      console.error('Get My Family Error:', error);
+      return res.json({ success: true, family });
+    } catch (err: any) {
+      console.error("Get My Family Error:", err);
       return res.status(500).json({
         success: false,
-        message: error.message || 'Failed to retrieve family data.',
+        message: err.message || "Failed to fetch family.",
       });
     }
   }
 
-  // GET /api/families - Admin/Volunteer gets all families
+  // -------------------------------
+  // Get all families (admin/volunteer)
+  // -------------------------------
   static async getAll(req: AuthRequest, res: Response) {
     try {
-      const userRole = req.user!.role;
-
-      // Only admin and volunteer can view all families
-      if (userRole !== 'admin' && userRole !== 'volunteer') {
-        return res.status(403).json({
-          success: false,
-          message: 'Access denied. Admin or Volunteer role required.',
-        });
-      }
-
       const families = FamilyModel.getAll();
-
-      return res.json({
-        success: true,
-        message: 'All families retrieved successfully.',
-        data: { families },
-      });
-    } catch (error: any) {
-      console.error('Get All Families Error:', error);
+      return res.json({ success: true, families });
+    } catch (err: any) {
+      console.error("Get All Families Error:", err);
       return res.status(500).json({
         success: false,
-        message: error.message || 'Failed to retrieve families.',
+        message: err.message || "Failed to fetch families.",
       });
     }
   }
 
-  // GET /api/families/:family_id - Get specific family by ID
+  // -------------------------------
+  // Get family by ID
+  // -------------------------------
   static async getById(req: AuthRequest, res: Response) {
     try {
-      const { family_id } = req.params;
-      const userRole = req.user!.role;
-      const userId = req.user!.user_id;
-
-      const family = FamilyModel.getById(family_id);
+      const familyId = req.params.family_id;
+      const family = FamilyModel.getById(familyId);
 
       if (!family) {
         return res.status(404).json({
           success: false,
-          message: 'Family not found.',
+          message: "Family not found.",
         });
       }
 
-      // Check permissions: parent can only view their own family
-      if (userRole === 'parent' && family.parent_id !== userId) {
-        return res.status(403).json({
-          success: false,
-          message: 'Access denied. You can only view your own family.',
-        });
-      }
-
-      // Get children for this family
-      const children = ChildProfileModel.getByFamilyId(family_id);
-
-      return res.json({
-        success: true,
-        message: 'Family retrieved successfully.',
-        data: { family, children },
-      });
-    } catch (error: any) {
-      console.error('Get Family By ID Error:', error);
+      return res.json({ success: true, family });
+    } catch (err: any) {
+      console.error("Get Family By ID Error:", err);
       return res.status(500).json({
         success: false,
-        message: error.message || 'Failed to retrieve family.',
+        message: err.message || "Failed to fetch family.",
       });
     }
   }
 
-  // PATCH /api/families/:family_id/verify - Volunteer/Admin verifies family
+  // -------------------------------
+  // Verify family (admin only)
+  // -------------------------------
   static async verifyFamily(req: AuthRequest, res: Response) {
     try {
-      const { family_id } = req.params;
-      const { status } = req.body; // 'verified' | 'rejected'
-      const userRole = req.user!.role;
-      const userId = req.user!.user_id;
+      const familyId = req.params.family_id;
+      const { status } = req.body; // expected 'verified' or 'rejected'
+      const volunteerId = req.user!.user_id; // optional: who verified
 
-      // Only admin and volunteer can verify
-      if (userRole !== 'admin' && userRole !== 'volunteer') {
-        return res.status(403).json({
-          success: false,
-          message: 'Access denied. Admin or Volunteer role required.',
-        });
-      }
-
-      if (!['verified', 'rejected'].includes(status)) {
-        return res.status(400).json({
-          success: false,
-          message: 'Invalid status. Must be "verified" or "rejected".',
-        });
-      }
-
-      const family = FamilyModel.getById(family_id);
+      const family = FamilyModel.getById(familyId);
       if (!family) {
         return res.status(404).json({
           success: false,
-          message: 'Family not found.',
+          message: "Family not found.",
         });
       }
 
-      // Update verification status
-      FamilyModel.verifyFamily(family_id, status, userId);
+      // Call model method
+      FamilyModel.verifyFamily(familyId, status, volunteerId);
 
       return res.json({
         success: true,
-        message: `Family ${status === 'verified' ? 'approved' : 'rejected'} successfully.`,
+        message: `Family verification status updated to ${status}.`,
       });
-    } catch (error: any) {
-      console.error('Verify Family Error:', error);
+    } catch (err: any) {
+      console.error("Verify Family Error:", err);
       return res.status(500).json({
         success: false,
-        message: error.message || 'Failed to verify family.',
+        message: err.message || "Failed to verify family.",
       });
     }
   }
 
-  // PATCH /api/families/:family_id/support - Update support status
+  // -------------------------------
+  // Update support status (admin)
+  // -------------------------------
   static async updateSupportStatus(req: AuthRequest, res: Response) {
     try {
-      const { family_id } = req.params;
-      const { status, sponsor_id } = req.body; // 'shortlisted' | 'sponsored'
-      const userRole = req.user!.role;
+      const familyId = req.params.family_id;
+      const { support_status, sponsor_id } = req.body;
 
-      // Only admin and volunteer can update support status
-      if (userRole !== 'admin' && userRole !== 'volunteer') {
-        return res.status(403).json({
-          success: false,
-          message: 'Access denied. Admin or Volunteer role required.',
-        });
-      }
-
-      if (!['shortlisted', 'sponsored'].includes(status)) {
-        return res.status(400).json({
-          success: false,
-          message: 'Invalid status. Must be "shortlisted" or "sponsored".',
-        });
-      }
-
-      const family = FamilyModel.getById(family_id);
+      const family = FamilyModel.getById(familyId);
       if (!family) {
         return res.status(404).json({
           success: false,
-          message: 'Family not found.',
+          message: "Family not found.",
         });
       }
 
-      // Update support status
-      FamilyModel.updateSupportStatus(family_id, status, sponsor_id);
+      FamilyModel.updateSupportStatus(familyId, support_status, sponsor_id);
 
       return res.json({
         success: true,
-        message: `Family marked as ${status} successfully.`,
+        message: `Family support status updated to ${support_status}.`,
       });
-    } catch (error: any) {
-      console.error('Update Support Status Error:', error);
+    } catch (err: any) {
+      console.error("Update Support Status Error:", err);
       return res.status(500).json({
         success: false,
-        message: error.message || 'Failed to update support status.',
+        message: err.message || "Failed to update support status.",
       });
     }
   }
 
-  // PATCH /api/families/my/proof - Parent uploads proof documents
+  // -------------------------------
+  // Upload proof documents (parent)
+  // -------------------------------
   static async uploadProofDocuments(req: AuthRequest, res: Response) {
     try {
       const parentId = req.user!.user_id;
-      const { proof_documents } = req.body;
 
-      if (!Array.isArray(proof_documents)) {
+      const files = await handleFileUpload(req, res);
+      if (!files || files.length === 0) {
         return res.status(400).json({
           success: false,
-          message: 'proof_documents must be an array of strings.',
+          message: "No files uploaded.",
         });
       }
 
+      // Get family
       const family = FamilyModel.getByParentId(parentId);
       if (!family) {
         return res.status(404).json({
           success: false,
-          message: 'Family not found. Please register your family first.',
+          message: "Family not found. Please register your family first.",
         });
       }
 
-      // Upload proof documents
-      FamilyModel.uploadProofDocuments(family.family_id, proof_documents);
+      // Store relative paths
+      const uploadedPaths = files.map((file) =>
+        path.relative(path.join(__dirname, "../../uploads"), file.path).replace(/\\/g, "/")
+      );
+
+      // Append new uploads to existing files if needed
+      const allFiles = [...(family.proof_documents || []), ...uploadedPaths];
+      FamilyModel.uploadProofDocuments(family.family_id, allFiles);
 
       return res.json({
         success: true,
-        message: 'Proof documents uploaded successfully.',
+        message: "Proof documents uploaded successfully.",
+        files: uploadedPaths,
       });
     } catch (error: any) {
-      console.error('Upload Proof Documents Error:', error);
+      console.error("Upload Proof Documents Error:", error);
       return res.status(500).json({
         success: false,
-        message: error.message || 'Failed to upload proof documents.',
+        message: error.message || "Failed to upload proof documents.",
       });
     }
   }

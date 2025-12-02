@@ -36,13 +36,17 @@ router.post('/create', requireParent, ChallanController.createChallan);
 // GET /api/challans - Get all challans (admin only)
 router.get('/', requireAdmin, ChallanController.getAllChallans);
 
-// GET /api/challans/:challan_id - Get single challan
-router.get('/:challan_id', ChallanController.getChallan);
 
 // PATCH /api/challans/:challan_id/verify - Admin verifies challan
 router.patch('/:challan_id/verify', requireAdmin, ChallanController.verifyChallan);
 
-// GET /api/challans/child/:child_id - Get all challans for a child
+
+// --- ORDER MATTERS ---
+// 1. Get challans for a child
 router.get('/child/:child_id', ChallanController.getChallansByChild);
+
+// 2. Get single challan
+router.get('/:challan_id', ChallanController.getChallan);
+
 
 export default router;

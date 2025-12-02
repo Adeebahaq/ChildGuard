@@ -23,6 +23,9 @@ const requireParent = (
 router.use(authMiddleware);
 router.use(requireParent); 
 
+// GET /api/parent/myChildren - fetch all children of parent
+router.get("/myChildren", ParentController.getMyChildren);
+
 // POST /api/parent/register-family 
 router.post('/register-family', ParentController.registerFamily); 
 
@@ -37,5 +40,11 @@ router.get('/challans', ParentController.getMyChallans);
 
 // PATCH /api/parent/challans/:challan_id/paid
 router.patch('/challans/:challan_id/paid', ParentController.markChallanPaid);
+
+//  POST /api/parent/fee-challan/:child_id - Upload fee challan
+router.post('/fee-challan/:child_id', ParentController.uploadFeeChallan);
+
+//  GET /api/parent/fee-challan/:child_id - Get challan history for a child
+router.get('/fee-challan/:child_id', ParentController.getChildChallanHistory);
 
 export default router;

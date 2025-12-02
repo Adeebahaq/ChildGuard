@@ -1,7 +1,7 @@
 // src/controllers/parentController.ts
 import { Response } from 'express';
 import { AuthRequest } from '../middleware/authMiddleware'; 
-import { ParentModel } from '../models/parents'; 
+import { ParentModel } from '../models/parent'; 
 import { FamilyModel } from '../models/family';
 import { ChildProfileModel, ChildProfile } from '../models/childprofile'; 
 import { FeeChallanModel } from '../models/feechallan';

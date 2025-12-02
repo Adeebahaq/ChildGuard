@@ -1,4 +1,4 @@
-// src/pages/AdminCasesDashboard.jsx
+// src/pages/AdminCasesDashboard.jsx  ← REPLACE FULL FILE
 import React, { useState, useEffect } from 'react';
 import './AdminCasesDashboard.css';
 
@@ -18,17 +18,22 @@ const AdminCasesDashboard = () => {
       if (!token) return alert('Login as admin first');
 
       const [repRes, volRes] = await Promise.all([
-        fetch('http://localhost:5000/api/admin/reports', { headers: { Authorization: `Bearer ${token}` } }),
-        fetch('http://localhost:5000/api/admin/volunteers', { headers: { Authorization: `Bearer ${token}` } })
+        fetch('http://localhost:5000/api/admin/reports', { 
+          headers: { Authorization: `Bearer ${token}` } 
+        }),
+        fetch('http://localhost:5000/api/admin/volunteers', { 
+          headers: { Authorization: `Bearer ${token}` } 
+        })
       ]);
 
       const repData = await repRes.json();
       const volData = await volRes.json();
 
-      if (repData.success) setReports(repData.data || []);
+      if (repData.success) {
+        setReports(repData.data || []); // Now includes verification_status
+      }
       if (volData.success) {
-        const approved = volData.data.filter(v => v.status === 'approved' && v.area);
-        setVolunteers(approved);
+        setVolunteers(volData.data.filter(v => v.status === 'approved' && v.area));
       }
     } catch (err) {
       console.error(err);
@@ -38,42 +43,21 @@ const AdminCasesDashboard = () => {
   };
 
   const assignVolunteer = async (reportId, volunteerId) => {
-    const report = reports.find(r => r.report_id === reportId);
-    const volunteer = volunteers.find(v => v.volunteer_id === volunteerId);
-
-    const sameAreaVols = volunteers.filter(v => 
-      v.area?.trim().toLowerCase() === report.location?.trim().toLowerCase()
-    );
-
-    const isSameArea = volunteer.area?.trim().toLowerCase() === report.location?.trim().toLowerCase();
-
-    // BLOCK if same-area exists but volunteer is from different area
-    if (sameAreaVols.length > 0 && !isSameArea) {
-      alert(`Volunteer from ${report.location} is available. You must assign a local volunteer first.`);
-      return;
-    }
-
-    // Proceed with assignment
     try {
       const token = localStorage.getItem('token');
       const res = await fetch(`http://localhost:5000/api/admin/reports/${reportId}/assign`, {
         method: 'PATCH',
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${token}`
-        },
+        headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
         body: JSON.stringify({ volunteerId })
       });
-
       const data = await res.json();
       if (data.success) {
-        setReports(prev => prev.map(r =>
-          r.report_id === reportId
+        setReports(prev => prev.map(r => 
+          r.report_id === reportId 
             ? { ...r, assigned_volunteer_id: volunteerId, status: 'action_taken' }
             : r
         ));
         setAssigningTo(null);
-        alert('Volunteer assigned successfully!');
       }
     } catch (err) {
       alert('Assignment failed');
@@ -85,7 +69,7 @@ const AdminCasesDashboard = () => {
     return v ? `${v.volunteer_id.slice(-6)} — ${v.area}` : 'Unknown';
   };
 
-  if (loading) return <div className="loading">Loading cases...</div>;
+  if (loading) return <div className="loading">Loading...</div>;
 
   return (
     <div className="cases-page">
@@ -100,13 +84,8 @@ const AdminCasesDashboard = () => {
         ) : (
           reports.map(report => {
             const reportLocation = report.location?.trim().toLowerCase();
-            const sameAreaVols = volunteers.filter(v => 
-              v.area?.trim().toLowerCase() === reportLocation
-            );
-
-            const availableVols = sameAreaVols.length > 0 
-              ? sameAreaVols 
-              : volunteers;
+            const sameAreaVols = volunteers.filter(v => v.area?.trim().toLowerCase() === reportLocation);
+            const availableVols = sameAreaVols.length > 0 ? sameAreaVols : volunteers;
 
             return (
               <div key={report.report_id} className="case-card">
@@ -115,9 +94,19 @@ const AdminCasesDashboard = () => {
                     <h2>{report.child_name || 'Unnamed Child'}</h2>
                     <span className="age">{report.child_age ? `${report.child_age} years` : ''}</span>
                   </div>
-                  <span className={`status-badge ${report.status}`}>
-                    {report.status.replace('_', ' ').toUpperCase()}
-                  </span>
+
+                  <div className="status-group">
+                    <span className={`status-badge ${report.status}`}>
+                      {report.status.replace('_', ' ').toUpperCase()}
+                    </span>
+
+                    {/* THIS SHOWS THE BADGE */}
+                    {report.verification_status && (
+                      <span className={`verification-badge ${report.verification_status}`}>
+                        {report.verification_status.toUpperCase()}
+                      </span>
+                    )}
+                  </div>
                 </div>
 
                 <div className="card-body">
@@ -132,10 +121,7 @@ const AdminCasesDashboard = () => {
                   </div>
                 ) : (
                   <div className="assign-box">
-                    <button
-                      className="assign-trigger"
-                      onClick={() => setAssigningTo(report.report_id)}
-                    >
+                    <button className="assign-trigger" onClick={() => setAssigningTo(report.report_id)}>
                       Assign Volunteer
                     </button>
 
@@ -146,7 +132,6 @@ const AdminCasesDashboard = () => {
                             ? `Must assign from ${report.location}`
                             : `No ${report.location} volunteer — choose any`}
                         </h4>
-
                         {availableVols.map(v => (
                           <button
                             key={v.volunteer_id}
@@ -157,10 +142,7 @@ const AdminCasesDashboard = () => {
                             {sameAreaVols.length > 0 && v.area?.toLowerCase() === reportLocation && ' (Required)'}
                           </button>
                         ))}
-
-                        <button className="cancel-btn" onClick={() => setAssigningTo(null)}>
-                          Cancel
-                        </button>
+                        <button className="cancel-btn" onClick={() => setAssigningTo(null)}>Cancel</button>
                       </div>
                     )}
                   </div>

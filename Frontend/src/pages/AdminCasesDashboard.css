@@ -81,6 +81,35 @@
 .status-badge.pending { background: #d32f2f; }
 .status-badge.action_taken { background: #2e7d32; }
 
+/* Status group to hold both badges side by side */
+.status-group {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+  align-items: center;
+}
+
+/*  Verification badge — ACCEPTED (Yellow) & CANCELLED (Red) */
+.verification-badge {
+  padding: 10px 20px;
+  border-radius: 50px;
+  color: white;
+  font-weight: bold;
+  font-size: 13px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.verification-badge.accepted {
+  background: #f59e0b; /* Beautiful yellow/orange */
+  box-shadow: 0 4px 15px rgba(245, 158, 11, 0.4);
+}
+
+.verification-badge.cancelled {
+  background: #dc2626; /* Strong red */
+  box-shadow: 0 4px 15px rgba(220, 38, 38, 0.4);
+}
+
 .card-body {
   padding: 26px;
   line-height: 1.7;

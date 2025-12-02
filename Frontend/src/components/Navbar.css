@@ -94,5 +94,5 @@
 /* --- 6. Reset Body Padding --- */
 /* Since we use the spacer div, we REMOVE the body padding to avoid a double gap */
 body, .main-content {
-  padding-top: 0 !important;
+  padding-top: 0 !important;
 }

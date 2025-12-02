@@ -139,9 +139,11 @@
         width: 95%;
         padding: 25px 20px;
     }
+    
     .input-group input {
         width: 100%;
     }
+    
     .availability-grid.days-grid {
         grid-template-columns: 1fr; /* stack days on small screens */
     }

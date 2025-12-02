@@ -1,76 +1,155 @@
-/* src/components/User/UserProfile.css */
-
-/* Use flexbox to separate Title and Button */
-.profile-header {
-  display: flex;
-
-  align-items: center;
-  margin-bottom: 20px;
-  border-bottom: 1px solid #eee; /* Optional: adds a nice separator line */
-  padding-bottom: 10px;
-}
-
+/* --- Profile Header --- */
 .profile-info h2 {
-  margin: 0; /* Remove default margin so it aligns with button */
+  margin-top: 0;
+  margin-bottom: 20px;
   display: flex;
   align-items: center;
   gap: 10px;
+  color: #008080; /* Teal */
 }
 
-/* --- Edit Button Styles --- */
-.edit-btn {
-  background-color: #007bff; /* Blue */
-  color: white;
-  border: none;
-  padding: 8px 16px;
-  border-radius: 5px;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  gap: 8px; /* Space between icon and text */
-  font-size: 14px;
-  transition: background-color 0.2s;
-}
-
-.edit-btn:hover {
-  background-color: #0056b3; /* Darker Blue on hover */
-}
-
-/* Existing styles */
+/* --- Profile Icons --- */
 .profile-icon-header {
   font-size: 1.5em;
-  color: #555;
+  color: #008080;
 }
 
 .profile-icon {
   margin-right: 8px;
-  color: #666;
+  color: #bfa950; /* Olden/yellow */
   vertical-align: -2px;
 }
 
 .profile-info p {
   margin-bottom: 12px;
   font-size: 16px;
+  color: #333;
 }
 
-
-
-/* --- Edit Button Styles --- */
+/* --- Edit Button --- */
 .edit-btn {
-  background-color: #008080; /* Teal Blue */
-  color: white;
+  background-color: #008080; /* Teal */
+  color: #fff;
   border: none;
   padding: 8px 16px;
   border-radius: 5px;
   cursor: pointer;
   display: flex;
   align-items: center;
-  gap: 8px; /* Space between icon and text */
+  gap: 8px;
   font-size: 14px;
   transition: background-color 0.2s, transform 0.1s;
 }
 
 .edit-btn:hover {
-  background-color: #006666; /* Darker teal on hover */
-  transform: scale(1.05); /* Slight zoom effect on hover */
+  background-color: #006666; /* Darker teal */
+  transform: scale(1.05);
+}
+
+/* Edit button container below info */
+.edit-btn-container {
+  margin-top: 20px;
+  display: flex;
+  justify-content: flex-start;
+}
+
+/* --- Modal Overlay --- */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+/* --- Modal Box --- */
+.modal {
+  background: #fff;
+  padding: 30px;
+  border-radius: 10px;
+  width: 400px;
+  max-width: 90%;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+  position: relative;
+  border-top: 5px solid #bfa950; /* Olden accent at top */
+}
+
+/* Modal Heading */
+.modal h2 {
+  margin-top: 0;
+  margin-bottom: 20px;
+  font-size: 1.5em;
+  color: #008080; /* Teal */
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+/* Form Labels */
+.modal-content label {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 15px;
+  font-weight: 500;
+  font-size: 14px;
+  color: #333;
+}
+
+/* Input Fields */
+.modal-content input {
+  padding: 8px 12px;
+  margin-top: 5px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  font-size: 14px;
+  transition: border-color 0.2s;
+}
+
+.modal-content input:focus {
+  border-color: #008080; /* Teal focus */
+  outline: none;
+}
+
+/* Modal Action Buttons */
+.modal-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  margin-top: 20px;
+}
+
+.modal-actions .edit-btn {
+  padding: 8px 16px;
+  font-size: 14px;
+  border-radius: 5px;
+  cursor: pointer;
+  background-color: #008080; /* Teal */
+  color: #fff;
+}
+
+.modal-actions .edit-btn:hover {
+  background-color: #006666;
+  transform: scale(1.05);
+}
+
+/* Cancel Button Style */
+.modal-actions .edit-btn.cancel-btn {
+  background-color: #FFD700; /* Olden/Yellow */
+}
+
+.modal-actions .edit-btn.cancel-btn:hover {
+  background-color: #FFD700; /* Darker olden */
+}
+
+/* Responsive */
+@media (max-width: 500px) {
+  .modal {
+    width: 90%;
+    padding: 20px;
+  }
 }

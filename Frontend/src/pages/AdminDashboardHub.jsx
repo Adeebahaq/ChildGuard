@@ -18,30 +18,30 @@ const AdminDashboardHub = () => {
         </Link>
 
         {/* 2. Parent Applications */}
-        <Link to="/admin/parents" className="admin-card">
-          <div className="card-header teal-header">Parent Applications</div>
-          <h2>View Parent Applications</h2>
-          <p>Review and approve applications from parents seeking help</p>
+        <Link to="/admin/families" className="admin-card">
+          <div className="card-header teal-header">Families</div>
+          <h2>Parent Management</h2>
+          <p>Approve family requests and assign volunteers to theri applications</p>
         </Link>
 
         {/* 3. Case Reports & Assignment */}
         <Link to="/admin/cases" className="admin-card">
           <div className="card-header teal-header">Case Reports</div>
-          <h2>Assign Volunteers to Cases</h2>
+          <h2>Vounteer Assignment</h2>
           <p>View reported cases and assign suitable volunteers based on availability</p>
         </Link>
 
         {/* 4. Sponsorships */}
         <Link to="/admin/sponsorships" className="admin-card">
           <div className="card-header teal-header">Sponsorships</div>
-          <h2>Approve Sponsorships</h2>
-          <p>Review and approve sponsorship requests and donations</p>
+          <h2>Sponsor Management</h2>
+          <p>Viewe sponsors and sponsored children</p>
         </Link>
 
         {/* 5. Awareness Content */}
         <Link to="/admin/awareness" className="admin-card">
           <div className="card-header teal-header">Awareness</div>
-          <h2>Awareness Content</h2>
+          <h2>Awareness Content Managment</h2>
           <p>Create and manage articles, images, videos, campaigns</p>
         </Link>
       </div>

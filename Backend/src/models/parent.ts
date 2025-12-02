@@ -172,6 +172,6 @@ export class ParentModel extends BaseModel {
       ORDER BY u.created_at DESC
     `).all() as Parent[];
 
-    return parents;
-  }
+    return parents;
+  }
 }

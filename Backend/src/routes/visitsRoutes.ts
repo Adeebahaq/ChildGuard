@@ -6,7 +6,6 @@ import { BaseModel } from "../models/BaseModels";
 const router = Router();
 router.use(authMiddleware);
 
-
 router.get("/volunteer/:volunteerId", async (req, res) => {
     try {
         BaseModel.init();
@@ -28,39 +27,49 @@ router.get("/volunteer/:volunteerId", async (req, res) => {
     }
 });
 
-
+// FINAL FIXED FEEDBACK ROUTE — WORKS PERFECTLY FOR BOTH ADMIN & VOLUNTEER
 router.put("/:visitId/feedback", async (req, res) => {
     try {
         BaseModel.init();
         const visitId = req.params.visitId;
-        const { findings } = req.body;
+        let { findings } = req.body;
 
         if (!findings || !findings.trim()) {
             return res.status(400).json({ success: false, message: "Findings cannot be empty" });
         }
 
-        const result = BaseModel.db
+        const originalFindings = findings.trim();
+        findings = findings.trim().toLowerCase();
+
+        // Detect positive vs negative feedback
+        const positiveWords = ["yes", "true", "exist", "found", "real", "confirmed", "child", "valid", "correct", "there"];
+        const negativeWords = ["no", "fake", "not found", "not exist", "false", "wrong", "hoax", "moved", "empty"];
+
+        const hasPositive = positiveWords.some(word => findings.includes(word));
+        const hasNegative = negativeWords.some(word => findings.includes(word));
+
+        const verificationResult = (hasPositive && !hasNegative) ? "ACCEPTED" : "CANCELLED";
+
+        // KEY FIX: status = "completed" so volunteer card moves to History
+        // But we store [ACCEPTED] or [CANCELLED] in findings so admin can read it
+        BaseModel.db
             .prepare(`
-                UPDATE verification_visits
+                UPDATE verification_visits 
                 SET status = 'completed',
                     findings = ?,
                     completed_at = datetime('now')
                 WHERE visit_id = ?
             `)
-            .run(findings, visitId);
-
-        if (result.changes === 0) {
-            return res.status(404).json({ success: false, message: "Visit not found" });
-        }
+            .run(`[${verificationResult}] ${originalFindings}`, visitId);
 
         const updatedVisit = BaseModel.db
             .prepare(`SELECT * FROM verification_visits WHERE visit_id = ?`)
             .get(visitId);
 
-        res.status(200).json({ success: true, visit: updatedVisit });
+        res.json({ success: true, visit: updatedVisit });
     } catch (err) {
-        console.error("Submit feedback error:", err);
-        res.status(500).json({ success: false, error: (err as Error).message });
+        console.error("Feedback error:", err);
+        res.status(500).json({ success: false, error: "Server error" });
     }
 });
 

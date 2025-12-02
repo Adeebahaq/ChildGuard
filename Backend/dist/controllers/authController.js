@@ -7,55 +7,57 @@ exports.AuthController = void 0;
 const bcryptjs_1 = __importDefault(require("bcryptjs"));
 const jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
 const DatabaseConnection_1 = require("../config/database/DatabaseConnection");
-// Use an environment variable in a real app
+const mail_1 = require("../utils/mail"); // import your mail utility
 const JWT_SECRET = "your_jwt_secret";
+// Temporary in-memory store for reset tokens
+const resetTokens = {}; // token -> user_id
 class AuthController {
-    // -----------------------------------------
-    // REGISTER
-    // -----------------------------------------
     static register(req, res) {
         try {
             const db = DatabaseConnection_1.DatabaseConnection.getInstance();
-            const { username, email, password, role, phone, address } = req.body;
-            // Validate role
+            const { username, email, password, role, phone, address, area } = req.body;
             const allowedRoles = ["parent", "sponsor", "volunteer", "admin", "case_reporter"];
             if (!allowedRoles.includes(role)) {
                 return res.status(400).json({ error: "Invalid user role" });
             }
-            // Check existing user (synchronous db.get)
-            const existing = db.prepare("SELECT * FROM users WHERE email = ? OR username = ?").get(email, username);
+            const existing = db.prepare("SELECT * FROM users WHERE email = ? OR username = ?")
+                .get(email, username);
             if (existing)
                 return res.status(400).json({ error: "User already exists" });
-            // Hash password
             const hash = bcryptjs_1.default.hashSync(password, 10);
-            // Generate ID
             const user_id = `USR-${Date.now()}-${Math.floor(Math.random() * 1000)}`;
-            // Use a transaction for the two inserts (users and role-specific table)
-            const insertUserAndExtension = db.transaction(() => {
-                // 1. Insert user
-                db.prepare(`INSERT INTO users (user_id, username, email, password_hash, role)
-                     VALUES (?, ?, ?, ?, ?)`).run(user_id, username, email, hash, role);
-                // 2. Insert into the role-specific table (e.g., parents or sponsors)
+            const newUser = db.transaction(() => {
+                db.prepare(`
+                    INSERT INTO users (user_id, username, email, password_hash, role)
+                    VALUES (?, ?, ?, ?, ?)
+                `).run(user_id, username, email, hash, role);
                 switch (role) {
                     case "parent":
-                        db.prepare(`INSERT INTO parents (parent_id, phone, address)
-                             VALUES (?, ?, ?)`).run(user_id, phone ?? null, address ?? null);
+                        db.prepare(`
+                            INSERT INTO parents (parent_id, phone, address)
+                            VALUES (?, ?, ?)
+                        `).run(user_id, phone ?? null, address ?? null);
                         break;
                     case "sponsor":
                         const prefsJson = req.body.preferences ? JSON.stringify(req.body.preferences) : null;
-                        db.prepare(`INSERT INTO sponsors (sponsor_id, phone, preferences)
-                             VALUES (?, ?, ?)`).run(user_id, phone ?? null, prefsJson);
+                        db.prepare(`
+                            INSERT INTO sponsors (sponsor_id, phone, preferences)
+                            VALUES (?, ?, ?)
+                        `).run(user_id, phone ?? null, prefsJson);
+                        break;
+                    case "volunteer":
+                        db.prepare(`
+                            INSERT INTO volunteers (volunteer_id, phone, area, status)
+                            VALUES (?, ?, ?, ?)
+                        `).run(user_id, phone ?? null, area ?? null, "pending");
                         break;
                     default:
                         break;
                 }
-                // 3. Select the data needed for the JWT and response body
-                return db.prepare("SELECT user_id, username, email, role FROM users WHERE user_id = ?")
-                    .get(user_id); // <-- FIX: Explicit Type Cast here
-            });
-            // newUser is now explicitly typed as AuthResponseUser, fixing errors 1 and 2.
-            const newUser = insertUserAndExtension();
-            // JWT (uses user_id and role, which are now correctly typed)
+                return db.prepare(`
+                    SELECT user_id, username, email, role FROM users WHERE user_id = ?
+                `).get(user_id);
+            })();
             const token = jsonwebtoken_1.default.sign({ user_id: newUser.user_id, role: newUser.role }, JWT_SECRET, { expiresIn: "1h" });
             res.status(201).json({
                 message: "Registration successful",
@@ -64,44 +66,82 @@ class AuthController {
             });
         }
         catch (err) {
-            console.error(err);
-            res.status(500).json({ error: "Registration failed", details: "A database or internal error occurred." });
+            console.error("Registration error:", err);
+            res.status(500).json({
+                error: "Registration failed",
+                details: err instanceof Error ? err.message : String(err)
+            });
         }
     }
-    // -----------------------------------------
-    // LOGIN
-    // -----------------------------------------
     static login(req, res) {
         try {
             const db = DatabaseConnection_1.DatabaseConnection.getInstance();
             const { email, password } = req.body;
-            // Lookup user (synchronous db.get)
-            // FIX: Explicit Type Cast for user as AuthDbUser or undefined
-            const user = db.prepare(`SELECT * FROM users WHERE email = ?`)
-                .get(email);
+            const user = db.prepare(`SELECT * FROM users WHERE email = ?`).get(email);
             if (!user)
                 return res.status(400).json({ error: "User not found" });
-            // Compare passwords (user.password_hash is now correctly typed, fixing error 3)
             const valid = bcryptjs_1.default.compareSync(password, user.password_hash);
             if (!valid)
                 return res.status(400).json({ error: "Invalid password" });
-            // JWT
-            const token = jsonwebtoken_1.default.sign({ user_id: user.user_id, role: user.role }, // user.user_id and user.role are now correctly typed, fixing errors 4 and 5.
-            JWT_SECRET, { expiresIn: "1h" });
+            const token = jsonwebtoken_1.default.sign({ user_id: user.user_id, role: user.role }, JWT_SECRET, { expiresIn: "1h" });
             res.json({
                 message: "Login successful",
                 token,
                 user: {
-                    user_id: user.user_id, // Fixes error 6
-                    username: user.username, // Fixes error 7
-                    email: user.email, // Fixes error 8
-                    role: user.role, // Fixes error 9
-                }, // Final cast ensures the response object shape is correct
+                    user_id: user.user_id,
+                    username: user.username,
+                    email: user.email,
+                    role: user.role,
+                },
             });
         }
         catch (err) {
-            console.error(err);
-            res.status(500).json({ error: "Login failed", details: "A database or internal error occurred." });
+            console.error("Login error:", err);
+            res.status(500).json({
+                error: "Login failed",
+                details: err instanceof Error ? err.message : String(err)
+            });
+        }
+    }
+    // ------------------- Forgot & Reset Password -------------------
+    static async forgotPassword(req, res) {
+        try {
+            const db = DatabaseConnection_1.DatabaseConnection.getInstance();
+            const { email } = req.body;
+            if (!email)
+                return res.status(400).json({ error: "Email is required" });
+            const user = db.prepare("SELECT * FROM users WHERE email = ?").get(email);
+            if (!user)
+                return res.status(404).json({ error: "User not found" });
+            // Generate a secure token
+            const token = Math.random().toString(36).substring(2, 15);
+            resetTokens[token] = user.user_id;
+            // Send the token via email
+            await (0, mail_1.sendResetEmail)(email, token);
+            res.json({ message: "Reset link sent to your email." });
+        }
+        catch (err) {
+            console.error("Forgot Password Error:", err);
+            res.status(500).json({ error: "Failed to send reset email" });
+        }
+    }
+    static resetPassword(req, res) {
+        try {
+            const db = DatabaseConnection_1.DatabaseConnection.getInstance();
+            const { token, newPassword } = req.body;
+            if (!token || !newPassword)
+                return res.status(400).json({ error: "Token and new password required" });
+            const userId = resetTokens[token];
+            if (!userId)
+                return res.status(400).json({ error: "Invalid or expired token" });
+            const hash = bcryptjs_1.default.hashSync(newPassword, 10);
+            db.prepare("UPDATE users SET password_hash = ? WHERE user_id = ?").run(hash, userId);
+            delete resetTokens[token]; // Remove used token
+            res.json({ message: "Password reset successful" });
+        }
+        catch (err) {
+            console.error("Reset Password Error:", err);
+            res.status(500).json({ error: "Failed to reset password" });
         }
     }
 }

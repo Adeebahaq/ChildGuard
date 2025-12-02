@@ -91,14 +91,9 @@ const UserProfile: React.FC<UserProfileProps> = ({ userId }) => {
 
   return (
     <div className="dashboard-box profile-info">
-      <div className="profile-header">
-        <h2>
-          <FaUserCircle className="profile-icon-header" /> Your Profile
-        </h2>
-        <button className="edit-btn" onClick={() => setIsModalOpen(true)}>
-          <FaEdit /> Edit
-        </button>
-      </div>
+      <h2>
+        <FaUserCircle className="profile-icon-header" /> Your Profile
+      </h2>
 
       <p><strong><FaUser className="profile-icon" /> Name:</strong> {profile.username}</p>
       <p><strong><FaEnvelope className="profile-icon" /> Email:</strong> {profile.email}</p>
@@ -110,6 +105,13 @@ const UserProfile: React.FC<UserProfileProps> = ({ userId }) => {
       {profile.updated_at && (
         <p><strong><FaClock className="profile-icon" /> Last Updated:</strong> {new Date(profile.updated_at).toLocaleDateString()}</p>
       )}
+
+      {/* Edit Button below information */}
+      <div className="edit-btn-container">
+        <button className="edit-btn" onClick={() => setIsModalOpen(true)}>
+          <FaEdit /> Edit Profile
+        </button>
+      </div>
 
       {/* Modal for editing profile */}
       <Modal
@@ -141,7 +143,7 @@ const UserProfile: React.FC<UserProfileProps> = ({ userId }) => {
           </label>
           <div className="modal-actions">
             <button className="edit-btn" onClick={handleSave}>Save</button>
-            <button className="edit-btn" style={{ backgroundColor: "#aaa" }} onClick={() => setIsModalOpen(false)}>Cancel</button>
+            <button className="edit-btn cancel-btn" onClick={() => setIsModalOpen(false)}>Cancel</button>
           </div>
         </div>
       </Modal>

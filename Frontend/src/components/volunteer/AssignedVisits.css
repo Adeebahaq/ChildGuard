@@ -1,0 +1,136 @@
+/* src/components/volunteer/AssignedVisits.css */
+
+/* Container for all visits */
+.visits-box {
+  padding: 20px;
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+/* Individual Visit Card */
+.visit-card {
+  background: white;
+  border: 1px solid #eee;
+  border-radius: 12px;
+  padding: 25px;
+  margin-bottom: 25px;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  text-align: left; /* Aligns text to the left */
+}
+
+.visit-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+}
+
+.visit-card h3 {
+  margin-top: 0;
+  color: #004d4d;
+}
+
+.visit-card p {
+  margin: 8px 0;
+  color: #555;
+  font-size: 1rem;
+  line-height: 1.5;
+}
+
+/* --- FORM STYLING --- */
+.feedback-form {
+  margin-top: 20px;
+  padding-top: 15px;
+  border-top: 1px dashed #ccc;
+}
+
+.feedback-form textarea {
+  width: 100%;
+  min-height: 100px;
+  padding: 15px;
+  border: 2px solid #ddd;
+  border-radius: 8px;
+  font-family: inherit;
+  font-size: 1rem;
+  margin-bottom: 15px;
+  resize: vertical;
+  box-sizing: border-box;
+}
+
+.feedback-form textarea:focus {
+  border-color: #008080;
+  outline: none;
+}
+
+/* --- BUTTONS --- */
+button {
+  cursor: pointer;
+  font-family: inherit;
+}
+
+/* Main Action Button (Teal) */
+.btn-action {
+  background-color: #008080;
+  color: white;
+  padding: 12px 24px;
+  border: none;
+  border-radius: 8px;
+  font-weight: 600;
+  font-size: 1rem;
+  margin-top: 15px;
+  transition: background 0.3s;
+}
+
+.btn-action:hover {
+  background-color: #006666;
+}
+
+/* Submit Button (Green) */
+.btn-submit {
+  background-color: #28a745;
+  color: white;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 6px;
+  font-weight: 600;
+  margin-right: 10px;
+}
+
+.btn-submit:hover {
+  background-color: #218838;
+}
+
+/* Cancel Button (Red) */
+.btn-cancel {
+  background-color: #dc3545;
+  color: white;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 6px;
+  font-weight: 600;
+}
+
+.btn-cancel:hover {
+  background-color: #c82333;
+}
+
+/* --- STATUS BADGES (Optional Bonus) --- */
+.status-badge {
+  display: inline-block;
+  padding: 4px 12px;
+  border-radius: 20px;
+  font-size: 0.85rem;
+  font-weight: bold;
+  text-transform: uppercase;
+}
+
+.status-assigned {
+  background-color: #fff3cd;
+  color: #856404;
+  border: 1px solid #ffeeba;
+}
+
+.status-completed {
+  background-color: #d4edda;
+  color: #155724;
+  border: 1px solid #c3e6cb;
+}

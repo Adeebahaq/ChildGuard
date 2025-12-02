@@ -2,6 +2,8 @@
 import { Router } from "express";
 import { authMiddleware } from "../middleware/authMiddleware";
 import { VolunteerModel } from "../models/volunteer";
+import { VisitModel } from "../models/Visit";           // CORRECT
+import { AdminModel } from "../models/admin";
 
 const router = Router();
 
